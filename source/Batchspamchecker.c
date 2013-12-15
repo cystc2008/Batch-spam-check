@@ -46,23 +46,23 @@ IPGROUP *IPs=NULL;
 void __stdcall SetIcon(HWND hwnd)
 {
 	SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON2)));
-    SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON3)));
+	SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON3)));
 }
 
 /*初始化通用对话框*/
 OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 {
-    OPENFILENAMEA ofn;
+	OPENFILENAMEA ofn;
 	static char ModuleName[1000]="";
-    ZeroMemory(&ofn, sizeof(ofn));
-    ofn.lStructSize = sizeof(ofn);
-    ofn.hwndOwner = hwnd;		
+	ZeroMemory(&ofn, sizeof(ofn));
+	ofn.lStructSize = sizeof(ofn);
+	ofn.hwndOwner = hwnd;		
 	ofn.lpstrFile = ModuleName;
 	ofn.nMaxFile = 1000;
-    ofn.lpstrFilter =lpstrFilter;
-    ofn.nFilterIndex = 1;
-    ofn.Flags = OFN_OVERWRITEPROMPT; 
-    return ofn;
+	ofn.lpstrFilter =lpstrFilter;
+	ofn.nFilterIndex = 1;
+	ofn.Flags = OFN_OVERWRITEPROMPT; 
+	return ofn;
 }
 
 /*获取保存文件路径*/
@@ -147,7 +147,7 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	switch(message)
 	{
 		case WM_INITDIALOG:
-            SetIcon(hwnd);
+			SetIcon(hwnd);
 			break;		
 		case WM_CONTEXTMENU:
 			hMenu=LoadMenuA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDR_MENU));
@@ -178,9 +178,10 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				default:break;
 			}
+			break;
 		default:return FALSE;		
 	}
-    return TRUE;
+	return TRUE;
 }
 
 /*检查IP地址黑名单*/
@@ -195,21 +196,21 @@ char* __stdcall CheckIPAdress(char IPAddress[])
 	WSADATA wsaData;
 	/*构造请求消息*/
 	sprintf(sndBuf, "GET http://www.stopforumspam.com/api?ip=%s\n\r\n",IPAddress);
-	 /* socket初始化 */
-    WSAStartup(MAKEWORD(2, 0), &wsaData);
+	/* socket初始化 */
+	WSAStartup(MAKEWORD(2, 0), &wsaData);
 	stSvrAddrIn.sin_family=AF_INET;
-    stSvrAddrIn.sin_port=htons(80); 
+	stSvrAddrIn.sin_port=htons(80); 
 	stSvrAddrIn.sin_addr.s_addr=inet_addr("195.20.205.9");
 	sSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	 /*连接*/
-    nRet=connect(sSocket,(SOCKADDR*)&stSvrAddrIn, sizeof(SOCKADDR));
+	/*连接*/
+	nRet=connect(sSocket,(SOCKADDR*)&stSvrAddrIn, sizeof(SOCKADDR));
 	if(nRet==SOCKET_ERROR)
 	{
 		MessageBoxA(NULL,"连接spam服务器失败！","警告",MB_ICONERROR|MB_SYSTEMMODAL);
 		return NULL;/*连接服务器失败返回*/
 	}
 	/*发送HTTP请求消息*/
-    send(sSocket, (char*)sndBuf, sizeof(sndBuf), 0);
+	send(sSocket, (char*)sndBuf, sizeof(sndBuf), 0);
 	/*接收HTTP响应消息*/
 	while(1)
 	{
@@ -221,7 +222,7 @@ char* __stdcall CheckIPAdress(char IPAddress[])
 		}
 	}
 	/*返回响应消息*/
-    return rcvBuf;
+	return rcvBuf;
 }
 
 /*获取IP归属地*/
@@ -281,7 +282,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 		i[2]=1;
 	if(IPGroup.low[0]=='*')
 		i[3]=1;
-    for(n=1;n<i[0]+i[1]+i[2]+i[3];n++)
+	for(n=1;n<i[0]+i[1]+i[2]+i[3];n++)
 	{
 		Number=Number*260;
 	}
@@ -488,14 +489,14 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 			IPAddress[n]=IPData[m];	
 		}
 		IPAddress[n]='\0';
-	    for(i=0;IPAddress[i]!='\0';i++)/*如果IP带通配符*/
-	    {
+		for(i=0;IPAddress[i]!='\0';i++)/*如果IP带通配符*/
+		{
 			if(IPAddress[i]=='*'/*||IPAddress[i]=='?'*/)
 			{
 				trimIP(IPAddress,ResultDlg);
 				break;
 			}
-	    }
+		}
 		if(IPAddress[i]=='\0')/*如果IP不带通配符*/
 		{
 			if(IPAddress[i-1]=='\r')/*去除回车符*/
@@ -555,7 +556,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_COMMAND:		
 			switch(LOWORD(wParam))
 			{
-			    case IDCHECK:
+				case IDCHECK:
 					GetIpData(hwnd);					
 					break;
 				case IDABOUT:
@@ -569,6 +570,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				default:break;
 			}
+			break;
 		default:return FALSE;		
 	}
 	return TRUE;
