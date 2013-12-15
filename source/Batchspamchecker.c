@@ -1,55 +1,55 @@
 /*
-Copyright (c) 2013 è‘—ä½œæƒç”±Cystcæ‰€æœ‰ã€‚è‘—ä½œæƒäººä¿ç•™ä¸€åˆ‡æƒåˆ©ã€‚
+Copyright (c) 2013 Öø×÷È¨ÓÉCystcËùÓÐ¡£Öø×÷È¨ÈË±£ÁôÒ»ÇÐÈ¨Àû¡£
 
-è¿™ä»½æŽˆæƒæ¡æ¬¾ï¼Œåœ¨ä½¿ç”¨è€…ç¬¦åˆä»¥ä¸‹ä¸‰æ¡ä»¶çš„æƒ…å½¢ä¸‹ï¼ŒæŽˆäºˆä½¿ç”¨è€…ä½¿ç”¨åŠå†æ•£æ’­æœ¬
-è½¯ä»¶åŒ…è£…åŽŸå§‹ç åŠäºŒè¿›ä½å¯æ‰§è¡Œå½¢å¼çš„æƒåˆ©ï¼Œæ— è®ºæ­¤åŒ…è£…æ˜¯å¦ç»æ”¹ä½œçš†ç„¶ï¼š
+Õâ·ÝÊÚÈ¨Ìõ¿î£¬ÔÚÊ¹ÓÃÕß·ûºÏÒÔÏÂÈýÌõ¼þµÄÇéÐÎÏÂ£¬ÊÚÓèÊ¹ÓÃÕßÊ¹ÓÃ¼°ÔÙÉ¢²¥±¾
+Èí¼þ°ü×°Ô­Ê¼Âë¼°¶þ½øÎ»¿ÉÖ´ÐÐÐÎÊ½µÄÈ¨Àû£¬ÎÞÂÛ´Ë°ü×°ÊÇ·ñ¾­¸Ä×÷½ÔÈ»£º
 
-å¯¹äºŽæœ¬è½¯ä»¶æºä»£ç çš„å†æ•£æ’­ï¼Œå¿…é¡»ä¿ç•™ä¸Šè¿°çš„ç‰ˆæƒå®£å‘Šã€æ­¤ä¸‰æ¡ä»¶è¡¨åˆ—ï¼Œä»¥
-åŠä¸‹è¿°çš„å…è´£å£°æ˜Žã€‚
-å¯¹äºŽæœ¬å¥—ä»¶äºŒè¿›ä½å¯æ‰§è¡Œå½¢å¼çš„å†æ•£æ’­ï¼Œå¿…é¡»è¿žå¸¦ä»¥æ–‡ä»¶ä»¥åŠï¼æˆ–è€…å…¶ä»–é™„
-äºŽæ•£æ’­åŒ…è£…ä¸­çš„åª’ä»‹æ–¹å¼ï¼Œé‡åˆ¶ä¸Šè¿°ä¹‹ç‰ˆæƒå®£å‘Šã€æ­¤ä¸‰æ¡ä»¶è¡¨åˆ—ï¼Œä»¥åŠä¸‹è¿°
-çš„å…è´£å£°æ˜Žã€‚
-æœªèŽ·äº‹å‰å–å¾—ä¹¦é¢è®¸å¯ï¼Œä¸å¾—ä½¿ç”¨Cystcæˆ–æœ¬è½¯ä»¶è´¡çŒ®è€…ä¹‹åç§°ï¼Œ
-æ¥ä¸ºæœ¬è½¯ä»¶ä¹‹è¡ç”Ÿç‰©åšä»»ä½•è¡¨ç¤ºæ”¯æŒã€è®¤å¯æˆ–æŽ¨å¹¿ã€ä¿ƒé”€ä¹‹è¡Œä¸ºã€‚
+¶ÔÓÚ±¾Èí¼þÔ´´úÂëµÄÔÙÉ¢²¥£¬±ØÐë±£ÁôÉÏÊöµÄ°æÈ¨Ðû¸æ¡¢´ËÈýÌõ¼þ±íÁÐ£¬ÒÔ
+¼°ÏÂÊöµÄÃâÔðÉùÃ÷¡£
+¶ÔÓÚ±¾Ì×¼þ¶þ½øÎ»¿ÉÖ´ÐÐÐÎÊ½µÄÔÙÉ¢²¥£¬±ØÐëÁ¬´øÒÔÎÄ¼þÒÔ¼°£¯»òÕßÆäËû¸½
+ÓÚÉ¢²¥°ü×°ÖÐµÄÃ½½é·½Ê½£¬ÖØÖÆÉÏÊöÖ®°æÈ¨Ðû¸æ¡¢´ËÈýÌõ¼þ±íÁÐ£¬ÒÔ¼°ÏÂÊö
+µÄÃâÔðÉùÃ÷¡£
+Î´»ñÊÂÇ°È¡µÃÊéÃæÐí¿É£¬²»µÃÊ¹ÓÃCystc»ò±¾Èí¼þ¹±Ï×ÕßÖ®Ãû³Æ£¬
+À´Îª±¾Èí¼þÖ®ÑÜÉúÎï×öÈÎºÎ±íÊ¾Ö§³Ö¡¢ÈÏ¿É»òÍÆ¹ã¡¢´ÙÏúÖ®ÐÐÎª¡£
 
-å…è´£å£°æ˜Žï¼šæœ¬è½¯ä»¶æ˜¯ç”±CystcåŠæœ¬è½¯ä»¶ä¹‹è´¡çŒ®è€…ä»¥çŽ°çŠ¶ï¼ˆ"as is"ï¼‰æä¾›ï¼Œ
-æœ¬è½¯ä»¶åŒ…è£…ä¸è´Ÿä»»ä½•æ˜Žç¤ºæˆ–é»˜ç¤ºä¹‹æ‹…ä¿è´£ä»»ï¼ŒåŒ…æ‹¬ä½†ä¸é™äºŽå°±é€‚å”®æ€§ä»¥åŠç‰¹å®šç›®
-çš„çš„é€‚ç”¨æ€§ä¸ºé»˜ç¤ºæ€§æ‹…ä¿ã€‚CystcåŠæœ¬è½¯ä»¶ä¹‹è´¡çŒ®è€…ï¼Œæ— è®ºä»»ä½•æ¡ä»¶ã€
-æ— è®ºæˆå› æˆ–ä»»ä½•è´£ä»»ä¸»ä¹‰ã€æ— è®ºæ­¤è´£ä»»ä¸ºå› åˆçº¦å…³ç³»ã€æ— è¿‡å¤±è´£ä»»ä¸»ä¹‰æˆ–å› éžè¿
-çº¦ä¹‹ä¾µæƒï¼ˆåŒ…æ‹¬è¿‡å¤±æˆ–å…¶ä»–åŽŸå› ç­‰ï¼‰è€Œèµ·ï¼Œå¯¹äºŽä»»ä½•å› ä½¿ç”¨æœ¬è½¯ä»¶åŒ…è£…æ‰€äº§ç”Ÿçš„
-ä»»ä½•ç›´æŽ¥æ€§ã€é—´æŽ¥æ€§ã€å¶å‘æ€§ã€ç‰¹æ®Šæ€§ã€æƒ©ç½šæ€§æˆ–ä»»ä½•ç»“æžœçš„æŸå®³ï¼ˆåŒ…æ‹¬ä½†ä¸é™
-äºŽæ›¿ä»£å•†å“æˆ–åŠ³åŠ¡ä¹‹è´­ç”¨ã€ä½¿ç”¨æŸå¤±ã€èµ„æ–™æŸå¤±ã€åˆ©ç›ŠæŸå¤±ã€ä¸šåŠ¡ä¸­æ–­ç­‰ç­‰ï¼‰ï¼Œ
-ä¸è´Ÿä»»ä½•è´£ä»»ï¼Œå³åœ¨è¯¥ç§ä½¿ç”¨å·²èŽ·äº‹å‰å‘ŠçŸ¥å¯èƒ½ä¼šé€ æˆæ­¤ç±»æŸå®³çš„æƒ…å½¢ä¸‹äº¦ç„¶ã€‚
+ÃâÔðÉùÃ÷£º±¾Èí¼þÊÇÓÉCystc¼°±¾Èí¼þÖ®¹±Ï×ÕßÒÔÏÖ×´£¨"as is"£©Ìá¹©£¬
+±¾Èí¼þ°ü×°²»¸ºÈÎºÎÃ÷Ê¾»òÄ¬Ê¾Ö®µ£±£ÔðÈÎ£¬°üÀ¨µ«²»ÏÞÓÚ¾ÍÊÊÊÛÐÔÒÔ¼°ÌØ¶¨Ä¿
+µÄµÄÊÊÓÃÐÔÎªÄ¬Ê¾ÐÔµ£±£¡£Cystc¼°±¾Èí¼þÖ®¹±Ï×Õß£¬ÎÞÂÛÈÎºÎÌõ¼þ¡¢
+ÎÞÂÛ³ÉÒò»òÈÎºÎÔðÈÎÖ÷Òå¡¢ÎÞÂÛ´ËÔðÈÎÎªÒòºÏÔ¼¹ØÏµ¡¢ÎÞ¹ýÊ§ÔðÈÎÖ÷Òå»òÒò·ÇÎ¥
+Ô¼Ö®ÇÖÈ¨£¨°üÀ¨¹ýÊ§»òÆäËûÔ­ÒòµÈ£©¶øÆð£¬¶ÔÓÚÈÎºÎÒòÊ¹ÓÃ±¾Èí¼þ°ü×°Ëù²úÉúµÄ
+ÈÎºÎÖ±½ÓÐÔ¡¢¼ä½ÓÐÔ¡¢Å¼·¢ÐÔ¡¢ÌØÊâÐÔ¡¢³Í·£ÐÔ»òÈÎºÎ½á¹ûµÄËðº¦£¨°üÀ¨µ«²»ÏÞ
+ÓÚÌæ´úÉÌÆ·»òÀÍÎñÖ®¹ºÓÃ¡¢Ê¹ÓÃËðÊ§¡¢×ÊÁÏËðÊ§¡¢ÀûÒæËðÊ§¡¢ÒµÎñÖÐ¶ÏµÈµÈ£©£¬
+²»¸ºÈÎºÎÔðÈÎ£¬¼´ÔÚ¸ÃÖÖÊ¹ÓÃÒÑ»ñÊÂÇ°¸æÖª¿ÉÄÜ»áÔì³É´ËÀàËðº¦µÄÇéÐÎÏÂÒàÈ»¡£
 */
 
 #include "Batchspamchecker.h"
 
-/*ä¿å­˜è¾“å…¥çš„IP*/
+/*±£´æÊäÈëµÄIP*/
 char *IPData=NULL;
 
-/*ä¿å­˜ä¸»çª—å£å¥æŸ„*/
+/*±£´æÖ÷´°¿Ú¾ä±ú*/
 HWND MainWindow=NULL;
 
-/*ä¿å­˜æŸ¥è¯¢çº¿ç¨‹å¥æŸ„*/
+/*±£´æ²éÑ¯Ïß³Ì¾ä±ú*/
 HANDLE hThread=NULL;
 
-/*ä¿å­˜å¸¦æœ‰é€šé…ç¬¦çš„ä¸€ç»„IP*/
+/*±£´æ´øÓÐÍ¨Åä·ûµÄÒ»×éIP*/
 typedef struct
 {
 	char high[4],midhigh[4],midlow[4],low[4];
 } IPGROUP;
 
-/*ä¿å­˜å¸¦æœ‰é€šé…ç¬¦çš„ä¸€ç»„ç©·ä¸¾åŽçš„IP*/
+/*±£´æ´øÓÐÍ¨Åä·ûµÄÒ»×éÇî¾ÙºóµÄIP*/
 IPGROUP *IPs=NULL;
 
-/*è®¾ç½®çª—å£å›¾æ ‡*/
+/*ÉèÖÃ´°¿ÚÍ¼±ê*/
 void __stdcall SetIcon(HWND hwnd)
 {
 	SendMessage(hwnd, WM_SETICON, ICON_SMALL, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON2)));
 	SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON3)));
 }
 
-/*åˆå§‹åŒ–é€šç”¨å¯¹è¯æ¡†*/
+/*³õÊ¼»¯Í¨ÓÃ¶Ô»°¿ò*/
 OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 {
 	OPENFILENAMEA ofn;
@@ -65,12 +65,12 @@ OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 	return ofn;
 }
 
-/*èŽ·å–ä¿å­˜æ–‡ä»¶è·¯å¾„*/
+/*»ñÈ¡±£´æÎÄ¼þÂ·¾¶*/
 char* __stdcall GetSavePath(HWND hwnd)
 {
 	OPENFILENAMEA ofn;
 	ZeroMemory(&ofn, sizeof(ofn));
-	ofn=InitCommonDlg("æ–‡æœ¬æ–‡ä»¶ï¼ˆ*.txtï¼‰\0*.txt\0",hwnd);
+	ofn=InitCommonDlg("ÎÄ±¾ÎÄ¼þ£¨*.txt£©\0*.txt\0",hwnd);
 	if(GetSaveFileNameA(&ofn))
 	{
 		return ofn.lpstrFile;
@@ -78,7 +78,7 @@ char* __stdcall GetSavePath(HWND hwnd)
 	return "";
 }
 
-/*å°†ç»“æžœå†™åˆ°æ–‡ä»¶*/
+/*½«½á¹ûÐ´µ½ÎÄ¼þ*/
 void __stdcall WriteResultFile(HWND hwnd) 
 {
 	int ListIndex=0;
@@ -113,7 +113,7 @@ void __stdcall WriteResultFile(HWND hwnd)
 	}
 }
 
-/*å¤åˆ¶é€‰ä¸­çš„ç»“æžœåˆ°å‰ªè´´æ¿*/
+/*¸´ÖÆÑ¡ÖÐµÄ½á¹ûµ½¼ôÌù°å*/
 void  __stdcall CopyToClickboard(HWND hwnd)
 {
 	HWND hList = GetDlgItem(hwnd, IDC_RESULT);	
@@ -139,10 +139,10 @@ void  __stdcall CopyToClickboard(HWND hwnd)
 	GlobalFree((HGLOBAL)SelIndex);
 }
 
-/*å¤„ç†ç»“æžœçª—æ¶ˆæ¯*/
+/*´¦Àí½á¹û´°ÏûÏ¢*/
 BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	DWORD ExitCode=0;/*ä¿å­˜æŸ¥è¯¢çº¿ç¨‹å‡ºå£ç */
+	DWORD ExitCode=0;/*±£´æ²éÑ¯Ïß³Ì³ö¿ÚÂë*/
 	HMENU hMenu=NULL;
 	switch(message)
 	{
@@ -184,34 +184,34 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-/*æ£€æŸ¥IPåœ°å€é»‘åå•*/
+/*¼ì²éIPµØÖ·ºÚÃûµ¥*/
 char* __stdcall CheckIPAdress(char IPAddress[])
 {
 	SOCKET sSocket=INVALID_SOCKET;
-	SOCKADDR_IN stSvrAddrIn={0}; /* æœåŠ¡å™¨ç«¯åœ°å€ */
+	SOCKADDR_IN stSvrAddrIn={0}; /* ·þÎñÆ÷¶ËµØÖ· */
 	char sndBuf[1024]="";
 	static char rcvBuf[2048]="";
 	char *pRcv=rcvBuf;
 	int num=0,nRet=SOCKET_ERROR;
 	WSADATA wsaData;
-	/*æž„é€ è¯·æ±‚æ¶ˆæ¯*/
+	/*¹¹ÔìÇëÇóÏûÏ¢*/
 	sprintf(sndBuf, "GET http://www.stopforumspam.com/api?ip=%s\n\r\n",IPAddress);
-	/* socketåˆå§‹åŒ– */
+	/* socket³õÊ¼»¯ */
 	WSAStartup(MAKEWORD(2, 0), &wsaData);
 	stSvrAddrIn.sin_family=AF_INET;
 	stSvrAddrIn.sin_port=htons(80); 
 	stSvrAddrIn.sin_addr.s_addr=inet_addr("195.20.205.9");
 	sSocket=socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	/*è¿žæŽ¥*/
+	/*Á¬½Ó*/
 	nRet=connect(sSocket,(SOCKADDR*)&stSvrAddrIn, sizeof(SOCKADDR));
 	if(nRet==SOCKET_ERROR)
 	{
-		MessageBoxA(NULL,"è¿žæŽ¥spamæœåŠ¡å™¨å¤±è´¥ï¼","è­¦å‘Š",MB_ICONERROR|MB_SYSTEMMODAL);
-		return NULL;/*è¿žæŽ¥æœåŠ¡å™¨å¤±è´¥è¿”å›ž*/
+		MessageBoxA(NULL,"Á¬½Óspam·þÎñÆ÷Ê§°Ü£¡","¾¯¸æ",MB_ICONERROR|MB_SYSTEMMODAL);
+		return NULL;/*Á¬½Ó·þÎñÆ÷Ê§°Ü·µ»Ø*/
 	}
-	/*å‘é€HTTPè¯·æ±‚æ¶ˆæ¯*/
+	/*·¢ËÍHTTPÇëÇóÏûÏ¢*/
 	send(sSocket, (char*)sndBuf, sizeof(sndBuf), 0);
-	/*æŽ¥æ”¶HTTPå“åº”æ¶ˆæ¯*/
+	/*½ÓÊÕHTTPÏìÓ¦ÏûÏ¢*/
 	while(1)
 	{
 		num = recv(sSocket, pRcv, 2048, 0);
@@ -221,11 +221,11 @@ char* __stdcall CheckIPAdress(char IPAddress[])
 			break ;
 		}
 	}
-	/*è¿”å›žå“åº”æ¶ˆæ¯*/
+	/*·µ»ØÏìÓ¦ÏûÏ¢*/
 	return rcvBuf;
 }
 
-/*èŽ·å–IPå½’å±žåœ°*/
+/*»ñÈ¡IP¹éÊôµØ*/
 location __stdcall GetLocation(char IP[21])
 {
 	location loc={0};  
@@ -234,7 +234,7 @@ location __stdcall GetLocation(char IP[21])
 	return loc;
 }
 
-/*è¾“å‡ºç»“æžœ*/
+/*Êä³ö½á¹û*/
 void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 {
 	char msg[100]="";
@@ -245,18 +245,18 @@ void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 	{
 		if(result[53]=='y')
 		{
-			sprintf(msg,"ip %s   åœ¨é»‘åå•ä¸­   %s %s",IPAddress,loc.p_country,loc.p_area );		
+			sprintf(msg,"ip %s   ÔÚºÚÃûµ¥ÖÐ   %s %s",IPAddress,loc.p_country,loc.p_area );		
 		}
 		else if(result[53]=='n')
 		{
-			sprintf(msg,"ip %s   ä¸åœ¨é»‘åå•   %s %s",IPAddress,loc.p_country,loc.p_area );
+			sprintf(msg,"ip %s   ²»ÔÚºÚÃûµ¥   %s %s",IPAddress,loc.p_country,loc.p_area );
 		}
 		if(ResultDlg!=NULL)
 		{
 			SendDlgItemMessageA(ResultDlg,IDC_RESULT,LB_ADDSTRING,0,(LPARAM)msg);			
 		}
 	}
-	else if(++Error>=2)/*è¿žç»­é”™è¯¯ï¼Œç»ˆæ­¢çº¿ç¨‹æ‰§è¡Œ*/
+	else if(++Error>=2)/*Á¬Ðø´íÎó£¬ÖÕÖ¹Ïß³ÌÖ´ÐÐ*/
 	{		
 		if(GetExitCodeThread(GetCurrentThread(),&ExitCode))
 		{
@@ -265,7 +265,7 @@ void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 	}
 }
 
-/*æžšä¸¾åŒ…å«*å·çš„IPçš„æ‰€æœ‰å¯èƒ½*/
+/*Ã¶¾Ù°üº¬*ºÅµÄIPµÄËùÓÐ¿ÉÄÜ*/
 void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 {
 	unsigned int i[4]={0,0,0,0};
@@ -288,7 +288,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 	}
 	if(Number>16581375)
 	{
-		MessageBoxA(NULL,"æ— æ³•ä¸€æ¬¡æŸ¥è¯¢è¿™ä¹ˆå¤šIP","è­¦å‘Š",MB_ICONERROR);
+		MessageBoxA(NULL,"ÎÞ·¨Ò»´Î²éÑ¯ÕâÃ´¶àIP","¾¯¸æ",MB_ICONERROR);
 		if(GetExitCodeThread(GetCurrentThread(),&ExitCode))
 		{
 			ExitThread(ExitCode);
@@ -433,7 +433,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 	}
 }
 
-/*å°†ä¸€ç»„IPæ•´ç†æˆchar*.char*.char*.char*çš„æ ¼å¼*/
+/*½«Ò»×éIPÕûÀí³Échar*.char*.char*.char*µÄ¸ñÊ½*/
 void __stdcall trimIP(char IPAddress[],HWND ResultDlg)
 {
 	static IPGROUP IPGroup={"","","",""};
@@ -470,7 +470,7 @@ void __stdcall trimIP(char IPAddress[],HWND ResultDlg)
 	EnumTPF(IPGroup,ResultDlg);
 }
 
-/*æŒ‰è¡Œå¤„ç†ç”¨æˆ·è¾“å…¥çš„IPä»¥ä¾¿äºŽæäº¤*/
+/*°´ÐÐ´¦ÀíÓÃ»§ÊäÈëµÄIPÒÔ±ãÓÚÌá½»*/
 void __stdcall ProcessIPData(HWND ResultDlg)
 {	
 	char IPAddress[21]="";
@@ -481,7 +481,7 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 	{
 		for(n=0;IPData[m]!='\n'&&IPData[m]!='\0';n++,m++)
 		{
-			if(IPData[m]==' ')/*è‡ªåŠ¨å¿½ç•¥ç©ºæ ¼*/
+			if(IPData[m]==' ')/*×Ô¶¯ºöÂÔ¿Õ¸ñ*/
 			{
 				n--;
 				continue;
@@ -489,7 +489,7 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 			IPAddress[n]=IPData[m];	
 		}
 		IPAddress[n]='\0';
-		for(i=0;IPAddress[i]!='\0';i++)/*å¦‚æžœIPå¸¦é€šé…ç¬¦*/
+		for(i=0;IPAddress[i]!='\0';i++)/*Èç¹ûIP´øÍ¨Åä·û*/
 		{
 			if(IPAddress[i]=='*'/*||IPAddress[i]=='?'*/)
 			{
@@ -497,9 +497,9 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 				break;
 			}
 		}
-		if(IPAddress[i]=='\0')/*å¦‚æžœIPä¸å¸¦é€šé…ç¬¦*/
+		if(IPAddress[i]=='\0')/*Èç¹ûIP²»´øÍ¨Åä·û*/
 		{
-			if(IPAddress[i-1]=='\r')/*åŽ»é™¤å›žè½¦ç¬¦*/
+			if(IPAddress[i-1]=='\r')/*È¥³ý»Ø³µ·û*/
 			{
 				IPAddress[i-1]='\0';
 			}
@@ -509,7 +509,7 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 	}
 }
 
-/*èŽ·å–ç”¨æˆ·è¾“å…¥çš„IPåœ°å€*/
+/*»ñÈ¡ÓÃ»§ÊäÈëµÄIPµØÖ·*/
 void __stdcall GetIpData(HWND hwnd)
 {
 	int len = GetWindowTextLengthA(GetDlgItem(hwnd, IP_LIST));
@@ -520,7 +520,7 @@ void __stdcall GetIpData(HWND hwnd)
 		GetDlgItemText(hwnd, IP_LIST, IPData,len+1);
 		if((IPData[0]>=48&&IPData[0]<=57)||IPData[0]=='*')
 		{
-			if(IPData[1]=='.'||IPData[2]=='.'||IPData[3]=='.')/*ç®€å•æ£€æµ‹ç”¨æˆ·è¾“å…¥æ•°æ®æ˜¯å¦åˆæ³•*/
+			if(IPData[1]=='.'||IPData[2]=='.'||IPData[3]=='.')/*¼òµ¥¼ì²âÓÃ»§ÊäÈëÊý¾ÝÊÇ·ñºÏ·¨*/
 			{
 				EnableWindow(hwnd,FALSE);
 				ResultDlg=CreateDialogA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDD_RESULT),hwnd,ResultProc);
@@ -530,21 +530,21 @@ void __stdcall GetIpData(HWND hwnd)
 				}
 				hThread=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)ProcessIPData ,ResultDlg,0,NULL);
 			}
-			else/*å¦‚ä¸åˆæ³•*/
+			else/*Èç²»ºÏ·¨*/
 			{
 				GlobalFree((HGLOBAL)IPData);
-				MessageBoxA(NULL,"æ‚¨è¾“å…¥çš„ä¸æ˜¯IPåœ°å€ï¼","è­¦å‘Š",MB_ICONERROR);
+				MessageBoxA(hwnd,"ÄúÊäÈëµÄ²»ÊÇIPµØÖ·£¡","¾¯¸æ",MB_ICONERROR);
 			}
 		}
 		else
 		{
 			GlobalFree((HGLOBAL)IPData);
-			MessageBoxA(NULL,"æ‚¨è¾“å…¥çš„ä¸æ˜¯IPåœ°å€ï¼","è­¦å‘Š",MB_ICONERROR);
+			MessageBoxA(hwnd,"ÄúÊäÈëµÄ²»ÊÇIPµØÖ·£¡","¾¯¸æ",MB_ICONERROR);
 		}
 	}
 }
 
-/*å¤„ç†ä¸»çª—å£æ¶ˆæ¯*/
+/*´¦ÀíÖ÷´°¿ÚÏûÏ¢*/
 BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	MainWindow=hwnd;
@@ -560,7 +560,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					GetIpData(hwnd);					
 					break;
 				case IDABOUT:
-					MessageBoxA(hwnd,"æœ¬è½¯ä»¶è‘—ä½œæƒå½’Cystcæ‰€æœ‰ï¼Œæ¬¢è¿Žå¤åˆ¶ï¼Œä¼ æ’­ï¼Œä½¿ç”¨ï¼","ç‰ˆæƒä¿¡æ¯",MB_ICONINFORMATION);
+					MessageBoxA(hwnd,"±¾Èí¼þÖø×÷È¨¹éCystcËùÓÐ£¬»¶Ó­¸´ÖÆ£¬´«²¥£¬Ê¹ÓÃ£¡","°æÈ¨ÐÅÏ¢",MB_ICONINFORMATION);
 					break;
 				case IDCLEAN:
 					SetDlgItemTextA(hwnd, IP_LIST,"");
@@ -576,7 +576,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	return TRUE;
 }
 
-/*ç¨‹åºå…¥å£*/
+/*³ÌÐòÈë¿Ú*/
 int WINAPI WinMain(HINSTANCE hThisInstance,HINSTANCE hPrevInstance,LPSTR lpszArgument,int nFunsterStil)
 {
 	DialogBoxA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(MAIN_GUI),0,WindowProc);
