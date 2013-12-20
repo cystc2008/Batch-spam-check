@@ -1,26 +1,26 @@
 /***** iplocation.c   
-ä»£ç åŠŸèƒ½ï¼šæŠŠqqçº¯çœŸipæ•°æ®åº“æ–‡ä»¶åŠ è½½åˆ°å…±äº«å†…å­˜é‡Œï¼Œé€šè¿‡å‚æ•°æŸ¥æ‰¾å‡ºå¯¹åº”çš„æ‰€å±çš„ipæ®µï¼Œå’Œåœ°ç†ä½ç½®ï¼Œä½¿ç”¨å…±äº«å†…å­˜å¯ä»¥ä½¿æŸ¥è¯¢ä¸€æ¬¡åœ¨çº³ç§’çº§ã€‚  
-qqçº¯çœŸipæ•°æ®åº“æ–‡ä»¶æ ¼å¼å¯ä»¥æŸ¥çœ‹ï¼šhttp://lumaqq.linuxsir.org/article/qqwry_format_detail.html  
-qqçº¯çœŸipæ•°æ®åº“å®˜ç½‘ä¸‹è½½åœ°å€ï¼šhttp://www.cz88.net/fox/ipdat.shtml,éœ€è¦å®‰è£…ï¼Œå®‰è£…å®ŒåæŠŠqqwry.datæ‹·å‡ºå³å¯ï¼Œä¹Ÿå¯ä»ç½‘ä¸Šæ‰¾ã€‚  
+´úÂë¹¦ÄÜ£º°Ñqq´¿ÕæipÊı¾İ¿âÎÄ¼ş¼ÓÔØµ½¹²ÏíÄÚ´æÀï£¬Í¨¹ı²ÎÊı²éÕÒ³ö¶ÔÓ¦µÄËùÊôµÄip¶Î£¬ºÍµØÀíÎ»ÖÃ£¬Ê¹ÓÃ¹²ÏíÄÚ´æ¿ÉÒÔÊ¹²éÑ¯Ò»´ÎÔÚÄÉÃë¼¶¡£  
+qq´¿ÕæipÊı¾İ¿âÎÄ¼ş¸ñÊ½¿ÉÒÔ²é¿´£ºhttp://lumaqq.linuxsir.org/article/qqwry_format_detail.html  
+qq´¿ÕæipÊı¾İ¿â¹ÙÍøÏÂÔØµØÖ·£ºhttp://www.cz88.net/fox/ipdat.shtml,ĞèÒª°²×°£¬°²×°Íêºó°Ñqqwry.dat¿½³ö¼´¿É£¬Ò²¿É´ÓÍøÉÏÕÒ¡£  
  
-æœ¬æ–‡ä»¶ä¸­éƒ¨åˆ†ä»£ç ç”±yifangyouæä¾›  
+±¾ÎÄ¼şÖĞ²¿·Ö´úÂëÓÉyifangyouÌá¹©  
 *******/ 
 
 #include "Batchspamchecker.h"
-#define SHARE_MEMORY_FILE "qqwry.dat" //å…±äº«å†…å­˜è·¯å¾„.ipåº“è·¯å¾„  
+#define SHARE_MEMORY_FILE "qqwry.dat" //¹²ÏíÄÚ´æÂ·¾¶.ip¿âÂ·¾¶  
 #define UNKNOWN "Unknown"  
-#define SHARE_MEMORY_SIZE 10485760 //å¿…é¡»æ¯”ipåº“æ–‡ä»¶å¤§    
-#define RECORD_LEN 7 //å•æ¡è®°å½•é•¿åº¦  
-//å…±äº«å†…å­˜æŒ‡é’ˆ  
+#define SHARE_MEMORY_SIZE 10485760 //±ØĞë±Èip¿âÎÄ¼ş´ó    
+#define RECORD_LEN 7 //µ¥Ìõ¼ÇÂ¼³¤¶È  
+//¹²ÏíÄÚ´æÖ¸Õë  
 char *p_share=NULL;  
-//ç¬¬ä¸€æ¡è®°å½•æŒ‡é’ˆ  
+//µÚÒ»Ìõ¼ÇÂ¼Ö¸Õë  
 char *p_begin;  
 char *p_end;  
-//æ€»è®°å½•æ•°  
+//×Ü¼ÇÂ¼Êı  
 long total_record;  
  
-//æŠŠ4å­—èŠ‚è½¬ä¸ºæ•´æ•°  
-unsigned long getlong4(char *pos) //å°†è¯»å–çš„4ä¸ªå­—èŠ‚è½¬åŒ–ä¸ºé•¿æ•´å‹æ•°  
+//°Ñ4×Ö½Ú×ªÎªÕûÊı  
+unsigned long getlong4(char *pos) //½«¶ÁÈ¡µÄ4¸ö×Ö½Ú×ª»¯Îª³¤ÕûĞÍÊı  
 {  
     unsigned long result=(((unsigned char )(*(pos+3)))<<24)  
      +(((unsigned char )(*(pos+2)))<<16)  
@@ -28,8 +28,8 @@ unsigned long getlong4(char *pos) //å°†è¯»å–çš„4ä¸ªå­—èŠ‚è½¬åŒ–ä¸ºé•¿æ•´å‹æ•°
      +((unsigned char )(*(pos)));  
     return result;  
 }  
-//æŠŠ3å­—èŠ‚è½¬ä¸ºæ•´æ•°  
-unsigned long getlong3(char *pos) //å°†è¯»å–çš„3ä¸ªå­—èŠ‚è½¬åŒ–ä¸ºé•¿æ•´å‹æ•°  
+//°Ñ3×Ö½Ú×ªÎªÕûÊı  
+unsigned long getlong3(char *pos) //½«¶ÁÈ¡µÄ3¸ö×Ö½Ú×ª»¯Îª³¤ÕûĞÍÊı  
 {  
     unsigned long result=(((unsigned char )(*(pos+2)))<<16)  
      +(((unsigned char )(*(pos+1)))<<8)  
@@ -38,7 +38,7 @@ unsigned long getlong3(char *pos) //å°†è¯»å–çš„3ä¸ªå­—èŠ‚è½¬åŒ–ä¸ºé•¿æ•´å‹æ•°
 }  
  
 /**  
- * åˆ›å»ºå…±äº«å†…å­˜ï¼Œå¹¶åŠ è½½ipåº“è¿›å»  
+ * ´´½¨¹²ÏíÄÚ´æ£¬²¢¼ÓÔØip¿â½øÈ¥  
  *  
  * @return void  
  */ 
@@ -46,22 +46,22 @@ void createshare()
 {    
      long filesize=0;  
      FILE *fp=fopen(SHARE_MEMORY_FILE,"rb");  
-     //è¯»å–æ–‡ä»¶é•¿åº¦
+     //¶ÁÈ¡ÎÄ¼ş³¤¶È
 	 if(fp!=NULL)
 	 {
 		 fseek(fp,0,SEEK_END);  
 		 filesize=ftell(fp);  
-		 //å½’é›¶  
+		 //¹éÁã  
 		 fseek(fp,0,SEEK_SET);  
 		 p_share = (char*)calloc(SHARE_MEMORY_SIZE,sizeof(char));     
-		 //æŠŠæ–‡ä»¶å†…å®¹è¯»å…¥å…±äº«å†…å­˜  
+		 //°ÑÎÄ¼şÄÚÈİ¶ÁÈë¹²ÏíÄÚ´æ  
 		 fread(p_share,filesize,1,fp);  
 		 fclose(fp);
 	 }
 }  
  
 /**  
- * æ‰“å¼€å…±äº«å†…å­˜æŒ‡é’ˆ  
+ * ´ò¿ª¹²ÏíÄÚ´æÖ¸Õë  
  *  
  * @return void  
  */ 
@@ -69,19 +69,19 @@ void openshare() // map a normal file as shared mem:
 {  
 	if(p_share==NULL)  
 	{  
-		//è‹¥æ˜¯ä¸å­˜åœ¨åˆ™åˆ›å»º  
+		//ÈôÊÇ²»´æÔÚÔò´´½¨  
 		createshare();      
 	}  
-	//ç¬¬ä¸€æ¡è®°å½•ä½ç½®  
+	//µÚÒ»Ìõ¼ÇÂ¼Î»ÖÃ  
 	p_begin=p_share+getlong4(p_share);  
-	//æœ€åä¸€æ¡è®°å½•ä½ç½®  
+	//×îºóÒ»Ìõ¼ÇÂ¼Î»ÖÃ  
 	p_end=p_share+getlong4(p_share+4);  
-	//è®°å½•æ€»æ•°  
+	//¼ÇÂ¼×ÜÊı  
 	total_record=(getlong4(p_share+4)-getlong4(p_share))/RECORD_LEN;  
 }  
  
 /**  
- * å…³é—­å…±äº«å†…å­˜æŒ‡é’ˆ  
+ * ¹Ø±Õ¹²ÏíÄÚ´æÖ¸Õë  
  *  
  * @return void  
  */ 
@@ -91,45 +91,45 @@ void closeshare()
 }  
  
 /**  
- * è¿”å›åœ°åŒºä¿¡æ¯  
+ * ·µ»ØµØÇøĞÅÏ¢  
  *  
- * @char *pos åœ°åŒºçš„æŒ‡é’ˆ  
+ * @char *pos µØÇøµÄÖ¸Õë  
  * @return char *  
  */ 
 char *getarea(char *pos) {  
-        char *byte=pos; // æ ‡å¿—å­—èŠ‚  
+        char *byte=pos; // ±êÖ¾×Ö½Ú  
         pos++;  
         switch (*byte) {  
-            case 0: // æ²¡æœ‰åŒºåŸŸä¿¡æ¯  
+            case 0: // Ã»ÓĞÇøÓòĞÅÏ¢  
                 return UNKNOWN;  
                 break;  
             case 1:  
-            case 2: // æ ‡å¿—å­—èŠ‚ä¸º1æˆ–2ï¼Œè¡¨ç¤ºåŒºåŸŸä¿¡æ¯è¢«é‡å®šå‘  
+            case 2: // ±êÖ¾×Ö½ÚÎª1»ò2£¬±íÊ¾ÇøÓòĞÅÏ¢±»ÖØ¶¨Ïò  
                 return p_share+getlong3(pos);  
                 break;  
-            default: // å¦åˆ™ï¼Œè¡¨ç¤ºåŒºåŸŸä¿¡æ¯æ²¡æœ‰è¢«é‡å®šå‘  
+            default: // ·ñÔò£¬±íÊ¾ÇøÓòĞÅÏ¢Ã»ÓĞ±»ÖØ¶¨Ïò  
                 return byte;  
                 break;  
         }  
   }  
-//è·å¾—ipæ‰€å±åœ°ç†ä¿¡æ¯,isp  
+//»ñµÃipËùÊôµØÀíĞÅÏ¢,isp  
 void getipinfo(char *ipstr,location *p_loc)  
 {  
       char *pos = p_share;  
       int record_len=10;  
       char *firstip=p_begin; // first record position  
 	  char *byte;
-      //æŠŠipè½¬ä¸ºæ•´æ•°  
+      //°Ñip×ªÎªÕûÊı  
       unsigned long ip=htonl(inet_addr(ipstr));  
       long l=0;  
       long u=total_record;  
       long i=0;
-	  unsigned long j;
+	  //unsigned long j;
 	  long offset;
       char* findip=firstip;  
       unsigned long beginip=0;  
       unsigned long endip=0;  
-      //äºŒåˆ†æ³•æŸ¥æ‰¾  
+      //¶ş·Ö·¨²éÕÒ  
       while(l <= u)  
       {  
            i=(l+u)/2;  
@@ -156,32 +156,32 @@ void getipinfo(char *ipstr,location *p_loc)
       }  
       offset = getlong3(findip+4);  
       pos=p_share+offset;  
-      endip= getlong4(pos); // ç”¨æˆ·IPæ‰€åœ¨èŒƒå›´çš„ç»“æŸåœ°å€  
+      endip= getlong4(pos); // ÓÃ»§IPËùÔÚ·¶Î§µÄ½áÊøµØÖ·  
       pos+=4;  
  
-      j=ntohl(beginip);  
-      InetNtop(AF_INET,&j,p_loc->beginip, INET6_ADDRSTRLEN);// è·å¾—å¼€å§‹åœ°å€çš„IPå­—ç¬¦ä¸²ç±»å‹  
-      j=ntohl(endip);  
-      InetNtop(AF_INET,&j,p_loc->endip, INET6_ADDRSTRLEN);// è·å¾—ç»“æŸåœ°å€çš„IPå­—ç¬¦ä¸²ç±»å‹  
+      //j=ntohl(beginip);  
+      //inet_ntop(AF_INET,&j,p_loc->beginip, INET6_ADDRSTRLEN);// »ñµÃ¿ªÊ¼µØÖ·µÄIP×Ö·û´®ÀàĞÍ  
+      //j=ntohl(endip);  
+      //inet_ntop(AF_INET,&j,p_loc->endip, INET6_ADDRSTRLEN);// »ñµÃ½áÊøµØÖ·µÄIP×Ö·û´®ÀàĞÍ  
         
-      byte = pos; // æ ‡å¿—å­—èŠ‚  
+      byte = pos; // ±êÖ¾×Ö½Ú  
       pos++;  
       switch (*byte) {  
-            case 1:{ // æ ‡å¿—å­—èŠ‚ä¸º1ï¼Œè¡¨ç¤ºå›½å®¶å’ŒåŒºåŸŸä¿¡æ¯éƒ½è¢«åŒæ—¶é‡å®šå‘  
-                long countryOffset = getlong3(pos); // é‡å®šå‘åœ°å€  
+            case 1:{ // ±êÖ¾×Ö½ÚÎª1£¬±íÊ¾¹ú¼ÒºÍÇøÓòĞÅÏ¢¶¼±»Í¬Ê±ÖØ¶¨Ïò  
+                long countryOffset = getlong3(pos); // ÖØ¶¨ÏòµØÖ·  
                 pos+=3;  
                 pos=p_share+countryOffset;  
-                byte = pos; // æ ‡å¿—å­—èŠ‚  
+                byte = pos; // ±êÖ¾×Ö½Ú  
                 pos++;  
                 switch (*byte) {  
-                    case 2: // æ ‡å¿—å­—èŠ‚ä¸º2ï¼Œè¡¨ç¤ºå›½å®¶ä¿¡æ¯åˆè¢«é‡å®šå‘  
+                    case 2: // ±êÖ¾×Ö½ÚÎª2£¬±íÊ¾¹ú¼ÒĞÅÏ¢ÓÖ±»ÖØ¶¨Ïò  
                     {  
                             p_loc->p_country=p_share+getlong3(pos);  
                             pos=p_share+countryOffset+4;  
 							p_loc->p_area = getarea(pos);  
                     }  
                     break;  
-                    default: // å¦åˆ™ï¼Œè¡¨ç¤ºå›½å®¶ä¿¡æ¯æ²¡æœ‰è¢«é‡å®šå‘  
+                    default: // ·ñÔò£¬±íÊ¾¹ú¼ÒĞÅÏ¢Ã»ÓĞ±»ÖØ¶¨Ïò  
                     {  
 						p_loc->p_country=byte;  
 						p_loc->p_area = getarea(p_loc->p_country+strlen(p_loc->p_country)+1);  
@@ -190,13 +190,13 @@ void getipinfo(char *ipstr,location *p_loc)
                 }  
             }  
             break;  
-            case 2: // æ ‡å¿—å­—èŠ‚ä¸º2ï¼Œè¡¨ç¤ºå›½å®¶ä¿¡æ¯è¢«é‡å®šå‘  
+            case 2: // ±êÖ¾×Ö½ÚÎª2£¬±íÊ¾¹ú¼ÒĞÅÏ¢±»ÖØ¶¨Ïò  
             {  
                 p_loc->p_country=p_share+getlong3(pos);  
                 p_loc->p_area=p_share+offset+8;  
             }  
             break;  
-            default:{ // å¦åˆ™ï¼Œè¡¨ç¤ºå›½å®¶ä¿¡æ¯æ²¡æœ‰è¢«é‡å®šå‘  
+            default:{ // ·ñÔò£¬±íÊ¾¹ú¼ÒĞÅÏ¢Ã»ÓĞ±»ÖØ¶¨Ïò  
                 p_loc->p_country=byte;  
                 p_loc->p_area=getarea(p_loc->p_country+strlen(p_loc->p_country)+1);  
             }  
