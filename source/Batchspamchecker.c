@@ -163,10 +163,18 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 						if(ExitCode==STILL_ACTIVE)
 						{
 							TerminateThread(hThread,ExitCode);
-							GlobalFree((HGLOBAL)IPs);							
+							if(IPs!=NULL)
+							{
+								GlobalFree((HGLOBAL)IPs);
+								IPs=NULL;
+							}
 						}
 					}
-					GlobalFree((HGLOBAL)IPData);
+					if(IPData!=NULL)
+					{
+						GlobalFree((HGLOBAL)IPData);
+						IPData=NULL;
+					}
 					EnableWindow(MainWindow,TRUE);
 					EndDialog(hwnd, IDCANCEL);
 					break;
@@ -430,6 +438,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 			}
 		}
 		GlobalFree((HGLOBAL)IPs);
+		IPs=NULL;
 	}
 }
 
@@ -517,28 +526,25 @@ void __stdcall GetIpData(HWND hwnd)
 	if(len > 0)
 	{
 		IPData=(char*)GlobalAlloc(GPTR,len+2);
-		GetDlgItemText(hwnd, IP_LIST, IPData,len+1);
-		if((IPData[0]>=48&&IPData[0]<=57)||IPData[0]=='*')
+		/*获取用户输入数据*/
+		GetDlgItemTextA(hwnd, IP_LIST, IPData,len+1);
+		/*简单检测用户输入数据是否合法*/
+		if(((IPData[0]>=48&&IPData[0]<=57)||IPData[0]=='*')&&((IPData[len-1]>=48&&IPData[len-1]<=57)||IPData[len-1]=='*'||IPData[len-1]==13||IPData[len-1]==10||IPData[len-1]==32)&&(IPData[1]=='.'||IPData[2]=='.'||IPData[3]=='.'))
 		{
-			if(IPData[1]=='.'||IPData[2]=='.'||IPData[3]=='.')/*简单检测用户输入数据是否合法*/
+			/*如合法*/						
+			EnableWindow(hwnd,FALSE);
+			ResultDlg=CreateDialogA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDD_RESULT),hwnd,ResultProc);
+			if(ResultDlg!=NULL)
 			{
-				EnableWindow(hwnd,FALSE);
-				ResultDlg=CreateDialogA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDD_RESULT),hwnd,ResultProc);
-				if(ResultDlg!=NULL)
-				{
-					ShowWindow(ResultDlg,SW_SHOW);
-				}
-				hThread=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)ProcessIPData ,ResultDlg,0,NULL);
+				ShowWindow(ResultDlg,SW_SHOW);
 			}
-			else/*如不合法*/
-			{
-				GlobalFree((HGLOBAL)IPData);
-				MessageBoxA(hwnd,"您输入的不是IP地址！","警告",MB_ICONERROR);
-			}
+			hThread=CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)ProcessIPData ,ResultDlg,0,NULL);
 		}
 		else
 		{
+			/*如不合法*/
 			GlobalFree((HGLOBAL)IPData);
+			IPData=NULL;
 			MessageBoxA(hwnd,"您输入的不是IP地址！","警告",MB_ICONERROR);
 		}
 	}
