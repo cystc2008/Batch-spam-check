@@ -139,11 +139,69 @@ void  __stdcall CopyToClickboard(HWND hwnd)
 	GlobalFree((HGLOBAL)SelIndex);
 }
 
+/*关闭结果对话框*/
+void __stdcall CloseResultDlg(DWORD ExitCode,HWND hwnd)
+{
+	if(GetExitCodeThread(hThread,&ExitCode))
+	{
+		if(ExitCode==STILL_ACTIVE)
+		{
+			TerminateThread(hThread,ExitCode);
+			if(IPs!=NULL)
+			{
+				GlobalFree((HGLOBAL)IPs);
+				IPs=NULL;
+			}
+		}
+	}
+	if(IPData!=NULL)
+	{
+		GlobalFree((HGLOBAL)IPData);
+		IPData=NULL;
+	}
+	EnableWindow(MainWindow,TRUE);
+	EndDialog(hwnd, IDCANCEL);
+}
+
+/*获取控件相对坐标*/
+POINT __stdcall GetClientPOS(HWND hwnd,HWND hCtrl,__out RECT* LPrectctrl)
+{	
+	POINT pos={0,0};
+	GetWindowRect(hCtrl,LPrectctrl);
+	pos.x=LPrectctrl->left;
+	pos.y=LPrectctrl->top;
+	ScreenToClient(hwnd,&pos);
+	return pos;
+}
+
+/*获取控件尺寸*/
+SIZE __stdcall GetCtrlSize(RECT rect)
+{
+	SIZE sz={0,0};
+	sz.cx=rect.right-rect.left;
+	sz.cy=rect.bottom-rect.top;
+	return sz;
+}
+
 /*处理结果窗消息*/
 BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	DWORD ExitCode=0;/*保存查询线程出口码*/
 	HMENU hMenu=NULL;
+	RECT rect={0,0,0,0};
+	//static RECT rectold;
+	static RECT rectoldCANCEL;
+	static RECT rectoldSAVE;
+	static RECT rectoldRESULT;
+	static POINT posCANCEL;
+	static POINT posSAVE;
+	static POINT posRESULT;
+	static SIZE szCANCEL;
+	static SIZE szSAVE;
+	static SIZE szRESULT;
+	HWND hIDCANCEL=GetDlgItem(hwnd,IDCANCEL);
+	HWND hIDC_SAVE=GetDlgItem(hwnd,IDC_SAVE);
+	HWND hIDC_RESULT=GetDlgItem(hwnd,IDC_RESULT);
 	switch(message)
 	{
 		case WM_INITDIALOG:
@@ -154,29 +212,46 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			TrackPopupMenu(GetSubMenu(hMenu,0),TPM_LEFTALIGN | TPM_TOPALIGN |TPM_RIGHTBUTTON,GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam),0,hwnd,NULL);
 			DestroyMenu(hMenu); 
 			break;
+		case WM_SIZE:
+			switch(wParam)
+			{
+				case SIZE_MAXIMIZED:
+					/*备份控件位置和大小*/
+					posCANCEL=GetClientPOS(hwnd,hIDCANCEL,&rectoldCANCEL);
+					posSAVE=GetClientPOS(hwnd,hIDC_SAVE,&rectoldSAVE);
+					posRESULT=GetClientPOS(hwnd,hIDC_RESULT,&rectoldRESULT);
+					szCANCEL=GetCtrlSize(rectoldCANCEL);
+					szSAVE=GetCtrlSize(rectoldSAVE);
+					szRESULT=GetCtrlSize(rectoldRESULT);
+					/*修改控件位置和大小*/
+					GetWindowRect(hwnd,&rect);										
+					MoveWindow(hIDCANCEL,rect.right-89,rect.bottom-54,75,23,TRUE);
+					MoveWindow(hIDC_SAVE,rect.left+10,rect.bottom-54,102,23,TRUE);
+					MoveWindow(hIDC_RESULT,rect.left+10,rect.top+10,rect.right-20,rect.bottom-65,TRUE);
+					break;
+				case SIZE_RESTORED:
+					/*还原控件位置和大小*/
+					MoveWindow(hIDCANCEL,posCANCEL.x,posCANCEL.y,szCANCEL.cx,szCANCEL.cy,TRUE);
+					MoveWindow(hIDC_SAVE,posSAVE.x,posSAVE.y,szSAVE.cx,szSAVE.cy,TRUE);
+					MoveWindow(hIDC_RESULT,posRESULT.x,posRESULT.y,szRESULT.cx,szRESULT.cy,TRUE);
+					break;
+				default:break;
+			}
+			break;
+		case WM_SYSCOMMAND:
+			switch(wParam)
+			{
+				case SC_CLOSE:
+					CloseResultDlg(ExitCode,hwnd);
+					break;
+				default:return DefWindowProc(hwnd,message,wParam,lParam);
+			}
+			break;
 		case WM_COMMAND:		
 			switch(LOWORD(wParam))
 			{
 				case IDCANCEL:															
-					if(GetExitCodeThread(hThread,&ExitCode))
-					{
-						if(ExitCode==STILL_ACTIVE)
-						{
-							TerminateThread(hThread,ExitCode);
-							if(IPs!=NULL)
-							{
-								GlobalFree((HGLOBAL)IPs);
-								IPs=NULL;
-							}
-						}
-					}
-					if(IPData!=NULL)
-					{
-						GlobalFree((HGLOBAL)IPData);
-						IPData=NULL;
-					}
-					EnableWindow(MainWindow,TRUE);
-					EndDialog(hwnd, IDCANCEL);
+					CloseResultDlg(ExitCode,hwnd);
 					break;
 				case IDC_SAVE:
 					WriteResultFile(hwnd);
@@ -282,6 +357,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 	unsigned int j,j1,k,l,m,n;
 	char Buf[4]={0,0,0,0};
 	char IPResult[21];
+	/*计算IP中包含几个*号以确定枚举后的IP大概数量，便于分配内存空间*/
 	if(IPGroup.high[0]=='*')
 		i[0]=1;
 	if(IPGroup.midhigh[0]=='*')
@@ -294,6 +370,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 	{
 		Number=Number*260;
 	}
+	/*如IP数量过多*/
 	if(Number>16581375)
 	{
 		MessageBoxA(NULL,"无法一次查询这么多IP","警告",MB_ICONERROR);
@@ -302,6 +379,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 			ExitThread(ExitCode);
 		}
 	}
+	/*开始枚举*/
 	else
 	{
 		IPs=(IPGROUP*)GlobalAlloc(GPTR,sizeof(IPGROUP)*Number);
@@ -429,6 +507,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 				}
 			}
 		}
+		/*过滤掉枚举后包含*号的IP然后提交*/
 		for(n=0;n<Num;n++)
 		{
 			if(IPs[n].high[0]!='*'&&IPs[n].midhigh[0]!='*'&&IPs[n].midlow[0]!='*'&&IPs[n].low[0]!='*')
@@ -437,6 +516,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 				PrintResult(IPResult,CheckIPAdress(IPResult),ResultDlg);
 			}
 		}
+		/*释放内存*/
 		GlobalFree((HGLOBAL)IPs);
 		IPs=NULL;
 	}
