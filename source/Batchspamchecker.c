@@ -355,7 +355,6 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 	DWORD ExitCode=0;
 	unsigned long Number=260,Num=0;
 	unsigned int j,j1,k,l,m,n;
-	char Buf[4]={0,0,0,0};
 	char IPResult[21];
 	/*计算IP中包含几个*号以确定枚举后的IP大概数量，便于分配内存空间*/
 	if(IPGroup.high[0]=='*')
@@ -395,15 +394,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 		{
 			if(i[0])
 			{
-				for(j1=0;j1<4;j1++)
-				{
-					Buf[j1]=0;
-				}
-				itoa(j,Buf,10);
-				for(j1=0;j1<4;j1++)
-				{
-					IPs[Num].high[j1]=Buf[j1];
-				}
+				itoa(j,IPs[Num].high,10);
 				for(j1=0;j1<4;j1++)
 				{
 					IPs[Num].midhigh[j1]=IPs[Num-1].midhigh[j1];
@@ -422,20 +413,12 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 			for(k=0;k<=255;k++)
 			{
 				if(i[1])
-				{
-					for(j1=0;j1<4;j1++)
-					{
-						Buf[j1]=0;
-					}
-					itoa(k,Buf,10);
+				{					
 					for(j1=0;j1<4;j1++)
 					{
 						IPs[Num].high[j1]=IPs[Num-1].high[j1];
 					}
-					for(j1=0;j1<4;j1++)
-					{
-						IPs[Num].midhigh[j1]=Buf[j1];
-					}
+					itoa(k,IPs[Num].midhigh,10);
 					for(j1=0;j1<4;j1++)
 					{
 						IPs[Num].midlow[j1]=IPs[Num-1].midlow[j1];
@@ -453,21 +436,13 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 					{
 						for(j1=0;j1<4;j1++)
 						{
-							Buf[j1]=0;
-						}
-						itoa(l,Buf,10);
-						for(j1=0;j1<4;j1++)
-						{
 							IPs[Num].high[j1]=IPs[Num-1].high[j1];
 						}
 						for(j1=0;j1<4;j1++)
 						{
 							IPs[Num].midhigh[j1]=IPs[Num-1].midhigh[j1];
 						}
-						for(j1=0;j1<4;j1++)
-						{
-							IPs[Num].midlow[j1]=Buf[j1];
-						}
+						itoa(l,IPs[Num].midlow,10);
 						for(j1=0;j1<4;j1++)
 						{
 							IPs[Num].low[j1]=IPs[Num-1].low[j1];
@@ -481,11 +456,6 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 						{
 							for(j1=0;j1<4;j1++)
 							{
-								Buf[j1]=0;
-							}
-							itoa(m,Buf,10);
-							for(j1=0;j1<4;j1++)
-							{
 								IPs[Num].high[j1]=IPs[Num-1].high[j1];
 							}
 							for(j1=0;j1<4;j1++)
@@ -496,10 +466,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 							{
 								IPs[Num].midlow[j1]=IPs[Num-1].midlow[j1];
 							}
-							for(j1=0;j1<4;j1++)
-							{
-								IPs[Num].low[j1]=Buf[j1];
-							}
+							itoa(m,IPs[Num].low,10);
 							Num++;
 						}
 						else{m=255;}

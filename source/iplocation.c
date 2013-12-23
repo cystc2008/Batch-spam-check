@@ -116,7 +116,7 @@ char *getarea(char *pos) {
 void getipinfo(char *ipstr,location *p_loc)  
 {  
       char *pos = p_share;  
-      int record_len=10;  
+      //int record_len=10;  
       char *firstip=p_begin; // first record position  
 	  char *byte;
       //把ip转为整数  
