@@ -10,4 +10,4 @@
 #define IP_LIST                                 1002
 #define IDC_CBSEARCH                            1003
 #define IDCLEAN                                 1005
-#define IDSYSM_ABOUT				1013
+#define IDSYSM_ABOUT                            1013
