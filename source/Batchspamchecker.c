@@ -394,7 +394,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 		{
 			if(i[0])
 			{
-				itoa(j,IPs[Num].high,10);
+				_itoa(j,IPs[Num].high,10);
 				for(j1=0;j1<4;j1++)
 				{
 					IPs[Num].midhigh[j1]=IPs[Num-1].midhigh[j1];
@@ -418,7 +418,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 					{
 						IPs[Num].high[j1]=IPs[Num-1].high[j1];
 					}
-					itoa(k,IPs[Num].midhigh,10);
+					_itoa (k,IPs[Num].midhigh,10);
 					for(j1=0;j1<4;j1++)
 					{
 						IPs[Num].midlow[j1]=IPs[Num-1].midlow[j1];
@@ -442,7 +442,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 						{
 							IPs[Num].midhigh[j1]=IPs[Num-1].midhigh[j1];
 						}
-						itoa(l,IPs[Num].midlow,10);
+						_itoa (l,IPs[Num].midlow,10);
 						for(j1=0;j1<4;j1++)
 						{
 							IPs[Num].low[j1]=IPs[Num-1].low[j1];
@@ -466,7 +466,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 							{
 								IPs[Num].midlow[j1]=IPs[Num-1].midlow[j1];
 							}
-							itoa(m,IPs[Num].low,10);
+							_itoa (m,IPs[Num].low,10);
 							Num++;
 						}
 						else{m=255;}
@@ -492,7 +492,7 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 /*将一组IP整理成char*.char*.char*.char*的格式*/
 void __stdcall trimIP(char IPAddress[],HWND ResultDlg)
 {
-	static IPGROUP IPGroup={"","","",""};
+	IPGROUP IPGroup={"","","",""};
 	unsigned int i=0,j=0,Part=0;
 	for(i=0;IPAddress[i]!='\0';i++)
 	{
@@ -565,6 +565,29 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 	}
 }
 
+/*从剪贴板中复制数据*/
+char* GetCbData(HWND hwnd)
+{
+	GLOBALHANDLE hGlobal=NULL;
+	char *pText=NULL;
+	char *pGlobal=NULL;
+	if(IsClipboardFormatAvailable(CF_TEXT))
+	{
+		OpenClipboard(hwnd);
+		hGlobal=GetClipboardData(CF_TEXT);
+		if(hGlobal!=NULL)
+		{
+			pText=(char*)malloc(GlobalSize(hGlobal)) ;
+			pGlobal =(char*)GlobalLock (hGlobal) ;
+			strcpy (pText, pGlobal) ;
+			GlobalUnlock (hGlobal) ;     
+			CloseClipboard () ;
+			return pText;
+		}
+	}
+	return NULL;
+}
+
 /*获取用户输入的IP地址*/
 void __stdcall GetIpData(HWND hwnd)
 {
@@ -597,23 +620,180 @@ void __stdcall GetIpData(HWND hwnd)
 	}
 }
 
+/*初始化菜单*/
+MENUITEMINFO __stdcall  InitMenu(LPSTR MenuText)
+{
+	MENUITEMINFO Minfo;
+	ZeroMemory(&Minfo,sizeof(Minfo));
+	Minfo.cbSize=sizeof(MENUITEMINFO);
+	Minfo.fMask=MFT_STRING | MIIM_DATA | MIIM_ID | MIIM_TYPE;
+	Minfo.fType=MFT_STRING;
+	Minfo.wID=IDSYSM_ABOUT;
+	Minfo.dwItemData=IDSYSM_ABOUT;
+	Minfo.dwTypeData=MenuText;
+	Minfo.cch=8;
+	return Minfo;
+}
+
+/*从剪贴板中搜索IP数据*/
+void __stdcall SearchAllIP(char *Data,HWND hwnd)
+{
+	/*临时存放IP的结构体*/
+	IPGROUP ip={"","","",""};
+	/*获取剪贴板内文本的长度*/
+	int len=strlen(Data);
+	/*获取原本的文本框内容长度*/
+	int Origlen=GetWindowTextLengthA(GetDlgItem(hwnd, IP_LIST));
+	/*定义所需的其他变量*/
+	int i,j,k,l,hi,mh,ml,lo,GroupPos=0,ResultNum=0;
+	char Result[20]="";
+	char ResultHistory[10000][20];
+	char *OrigList=NULL;
+	/*申请内存空间以保存搜索结果*/
+	char *ResultAll=(char*)calloc(len+Origlen+4,sizeof(char));
+	/*开始搜索*/
+	for(i=0;i<len+1;i++)
+	{
+		/*判断第一个字符以及最小长度下最后一个字符是否为数字,小数点或*号*/
+		if((Data[i]>=48&&Data[i]<=57)&&((Data[i+6]>=48&&Data[i+6]<=57)||Data[i+6]=='*'||Data[i+6]=='.'))
+		{
+			/*重新初始化相关变量*/
+			GroupPos=hi=mh=ml=lo=0;
+			/*重新初始化临时存放IP的结构体*/
+			for(k=0;k<4;k++)
+			{
+				ip.high[k]=ip.midhigh[k]=ip.midlow[k]=ip.low[k]=NULL;
+			}
+			/*进一步判断接下来的14个字符以确定是否是IP并记录到临时存放IP的结构体,如不是IP则跳出循环停止记录IP*/
+			for(j=i;j<=i+14&&j<len+1;j++)
+			{
+				if(Data[j]=='.'&&GroupPos<3)
+				{
+					GroupPos++;
+				}
+				else if((Data[j]>=48&&Data[j]<=57)||Data[j]=='*')
+				{						
+					if(GroupPos==0)
+					{
+						if(hi<3)
+						{
+							ip.high[hi++]=Data[j];
+							ip.high[hi]='\0';
+						}
+						else{break;}
+						if(atoi(ip.high)>255)
+						{
+							break;
+						}
+					}					
+					if(GroupPos==1)
+					{
+						if(mh<3)
+						{
+							ip.midhigh[mh++]=Data[j];
+							ip.midhigh[mh]='\0';
+						}
+						else{break;}
+						if(atoi(ip.midhigh)>255)
+						{
+							break;
+						}
+					}
+					if(GroupPos==2)
+					{
+						if(ml<3)
+						{
+							ip.midlow[ml++]=Data[j];
+							ip.midlow[ml]='\0';
+						}
+						else{break;}
+						if(atoi(ip.midlow)>255)
+						{
+							break;
+						}
+					}	
+					if(GroupPos==3)
+					{
+						if(lo<3)
+						{
+							ip.low[lo++]=Data[j];
+							ip.low[lo]='\0';
+						}
+						else{break;}
+						if(atoi(ip.low)>255)
+						{
+							break;
+						}
+					}
+				}
+				else{break;}
+			}
+			/*最后确定是否为IP并保存到结果*/
+			if(GroupPos==3&&(ip.low[0]>=48&&ip.low[0]<=57))
+			{
+				sprintf(Result,"%s.%s.%s.%s\r\n",ip.high,ip.midhigh,ip.midlow,ip.low);
+				/*判断与之前记录过的IP是否相同*/
+				for(l=0;l<ResultNum;l++)
+				{
+					/*如相同，则不记录IP*/
+					if(strcmp(Result,ResultHistory[l])==0)
+					{
+						goto same;/*跳过IP记录过程*/
+					}
+				}
+				strcat(ResultAll,Result);
+				strcpy(ResultHistory[ResultNum++],Result);
+				same:
+				i=i+strlen(Result)-1;/*跳过已记录的IP或者已忽略的与之前相同的IP的长度并继续搜索*/
+			}
+		}
+	}
+	/*将记录的IP与文本框内原有的内容连接，并重新填入文本框*/
+	OrigList=(char*)calloc(Origlen+2,sizeof(char));
+	GetDlgItemTextA(hwnd, IP_LIST, OrigList,Origlen+3);
+	strcat(ResultAll,OrigList);
+	SetDlgItemText(hwnd, IP_LIST, ResultAll);
+	/*释放内存*/
+	free(Data);
+	free(ResultAll);
+	free(OrigList);
+}
+
 /*处理主窗口消息*/
 BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-	MainWindow=hwnd;
+	static HMENU hSysMenu=NULL;
+	static MENUITEMINFO Minfo;
+	static char *CBData=NULL;
 	switch(message)
 	{
-		case WM_INITDIALOG: 
+		case WM_INITDIALOG:
+			MainWindow=hwnd;
+			hSysMenu=GetSystemMenu(hwnd,FALSE);
+			Minfo=InitMenu("关于...");
+			InsertMenuItem(hSysMenu,5,TRUE,&Minfo);
 			SetIcon(hwnd);
-			break;		
+			break;
+		case WM_SYSCOMMAND:
+			switch(wParam)
+			{
+				case IDSYSM_ABOUT:
+					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！","版权信息",MB_ICONINFORMATION);
+					break;
+				default:return DefWindowProc(hwnd,message,wParam,lParam);
+			}
+			break;
 		case WM_COMMAND:		
 			switch(LOWORD(wParam))
 			{
 				case IDCHECK:
 					GetIpData(hwnd);					
 					break;
-				case IDABOUT:
-					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！","版权信息",MB_ICONINFORMATION);
+				case IDC_CBSEARCH:
+					if(CBData=GetCbData(hwnd))
+					{
+						SearchAllIP(CBData,hwnd);
+					}
 					break;
 				case IDCLEAN:
 					SetDlgItemTextA(hwnd, IP_LIST,"");

@@ -1,3 +1,4 @@
+#define _CRT_SECURE_NO_DEPRECATE 
 #include <stdio.h> 
 #include <stdlib.h>
 #include <WindowsX.h>
@@ -16,8 +17,8 @@ typedef struct
 {  
     char *p_country;  
     char *p_area;  
-    char beginip[INET6_ADDRSTRLEN]; // 用户IP所在范围的开始地址  
-    char endip[INET6_ADDRSTRLEN]; // 用户IP所在范围的结束地址  
+    char beginip[INET6_ADDRSTRLEN]; // �û�IP���ڷ�Χ�Ŀ�ʼ��ַ  
+    char endip[INET6_ADDRSTRLEN]; // �û�IP���ڷ�Χ�Ľ�����ַ  
 }location;
 
 void getipinfo(char *ipstr,location *p_loc);
