@@ -577,11 +577,11 @@ char* GetCbData(HWND hwnd)
 		hGlobal=GetClipboardData(CF_TEXT);
 		if(hGlobal!=NULL)
 		{
-			pText=(char*)malloc(GlobalSize(hGlobal)) ;
-			pGlobal =(char*)GlobalLock (hGlobal) ;
-			strcpy (pText, pGlobal) ;
-			GlobalUnlock (hGlobal) ;     
-			CloseClipboard () ;
+			pText=(char*)GlobalAlloc(GMEM_FIXED,GlobalSize(hGlobal));
+			pGlobal =(char*)GlobalLock(hGlobal);
+			strcpy(pText,pGlobal);
+			GlobalUnlock(hGlobal);     
+			CloseClipboard();
 			return pText;
 		}
 	}
@@ -645,12 +645,17 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 	/*获取原本的文本框内容长度*/
 	int Origlen=GetWindowTextLengthA(GetDlgItem(hwnd, IP_LIST));
 	/*定义所需的其他变量*/
-	int i,j,k,l,hi,mh,ml,lo,GroupPos=0,ResultNum=0;
+	int i,j,k,l,m,hi,mh,ml,lo,GroupPos=0,ResultNum=0;
 	char Result[20]="";
-	char ResultHistory[10000][20];
 	char *OrigList=NULL;
-	/*申请内存空间以保存搜索结果*/
-	char *ResultAll=(char*)calloc(len+Origlen+4,sizeof(char));
+	/*申请内存空间以保存所有搜索结果*/
+	char *ResultAll=(char*)GlobalAlloc(GPTR,sizeof(char)*(len+Origlen+4));
+	/*申请内存空间以保存历史搜索结果*/
+	char **ResultHistory=(char**)GlobalAlloc(GPTR,sizeof(char*)*(len/7));
+	for(m=0;m<len/7;m++)
+	{
+		ResultHistory[m]=(char*)GlobalAlloc(GPTR,sizeof(char)*20);
+	}
 	/*开始搜索*/
 	for(i=0;i<len+1;i++)
 	{
@@ -662,7 +667,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 			/*重新初始化临时存放IP的结构体*/
 			for(k=0;k<4;k++)
 			{
-				ip.high[k]=ip.midhigh[k]=ip.midlow[k]=ip.low[k]=NULL;
+				ip.high[k]=ip.midhigh[k]=ip.midlow[k]=ip.low[k]='\0';
 			}
 			/*进一步判断接下来的14个字符以确定是否是IP并记录到临时存放IP的结构体,如不是IP则跳出循环停止记录IP*/
 			for(j=i;j<=i+14&&j<len+1;j++)
@@ -749,14 +754,19 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 		}
 	}
 	/*将记录的IP与文本框内原有的内容连接，并重新填入文本框*/
-	OrigList=(char*)calloc(Origlen+2,sizeof(char));
+	OrigList=(char*)GlobalAlloc(GPTR,sizeof(char)*(Origlen+2));
 	GetDlgItemTextA(hwnd, IP_LIST, OrigList,Origlen+3);
 	strcat(ResultAll,OrigList);
 	SetDlgItemText(hwnd, IP_LIST, ResultAll);
 	/*释放内存*/
-	free(Data);
-	free(ResultAll);
-	free(OrigList);
+	GlobalFree((HGLOBAL)Data);
+	GlobalFree((HGLOBAL)ResultAll);
+	GlobalFree((HGLOBAL)OrigList);
+	for(m=0;m<len/7;m++)
+	{
+		GlobalFree((HGLOBAL)ResultHistory[m]);
+	}
+	GlobalFree((HGLOBAL)ResultHistory);
 }
 
 /*处理主窗口消息*/
