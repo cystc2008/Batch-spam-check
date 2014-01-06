@@ -55,7 +55,7 @@ OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 	OPENFILENAMEA ofn;
 	static char ModuleName[1000]="";
 	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof(ofn);
+	ofn.lStructSize = sizeof (OPENFILENAME);
 	ofn.hwndOwner = hwnd;		
 	ofn.lpstrFile = ModuleName;
 	ofn.nMaxFile = 1000;
@@ -621,17 +621,17 @@ void __stdcall GetIpData(HWND hwnd)
 }
 
 /*初始化菜单*/
-MENUITEMINFO __stdcall  InitMenu(LPSTR MenuText)
+MENUITEMINFO __stdcall InitMenu(LPSTR MenuText,unsigned int wID)
 {
 	MENUITEMINFO Minfo;
 	ZeroMemory(&Minfo,sizeof(Minfo));
 	Minfo.cbSize=sizeof(MENUITEMINFO);
 	Minfo.fMask=MFT_STRING | MIIM_DATA | MIIM_ID | MIIM_TYPE;
 	Minfo.fType=MFT_STRING;
-	Minfo.wID=IDSYSM_ABOUT;
-	Minfo.dwItemData=IDSYSM_ABOUT;
+	Minfo.wID=wID;
+	Minfo.dwItemData=wID;
 	Minfo.dwTypeData=MenuText;
-	Minfo.cch=8;
+	Minfo.cch=strlen(MenuText)+1;
 	return Minfo;
 }
 
@@ -770,8 +770,8 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_INITDIALOG:
 			MainWindow=hwnd;
 			hSysMenu=GetSystemMenu(hwnd,FALSE);
-			Minfo=InitMenu("关于...");
-			InsertMenuItem(hSysMenu,5,TRUE,&Minfo);
+			Minfo=InitMenu("关于...",IDSYSM_ABOUT);
+			InsertMenuItemA(hSysMenu,5,TRUE,&Minfo);
 			SetIcon(hwnd);
 			break;
 		case WM_SYSCOMMAND:
@@ -786,7 +786,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_COMMAND:		
 			switch(LOWORD(wParam))
 			{
-				case IDCHECK:
+				case IDC_CHECK:
 					GetIpData(hwnd);					
 					break;
 				case IDC_CBSEARCH:
@@ -795,7 +795,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 						SearchAllIP(CBData,hwnd);
 					}
 					break;
-				case IDCLEAN:
+				case IDC_CLEAN:
 					SetDlgItemTextA(hwnd, IP_LIST,"");
 					break;
 				case IDCANCEL:

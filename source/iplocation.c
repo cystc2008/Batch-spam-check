@@ -113,7 +113,7 @@ char *getarea(char *pos) {
         }  
   }  
 //获得ip所属地理信息,isp  
-void getipinfo(char *ipstr,location *p_loc)  
+void getipinfo(char *ipstr,__out location *p_loc)  
 {  
       char *pos = p_share;  
       //int record_len=10;  

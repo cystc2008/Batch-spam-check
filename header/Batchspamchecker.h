@@ -41,8 +41,8 @@ typedef struct
 {  
     char *p_country;  
     char *p_area;  
-    char beginip[INET6_ADDRSTRLEN]; // 用户IP所在范围的开始地址  
-    char endip[INET6_ADDRSTRLEN]; // 用户IP所在范围的结束地址  
+    //char beginip[INET6_ADDRSTRLEN]; // 用户IP所在范围的开始地址  
+    //char endip[INET6_ADDRSTRLEN]; // 用户IP所在范围的结束地址  
 }location;
 
 void getipinfo(char *ipstr,location *p_loc);
