@@ -664,7 +664,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 	for(i=0;i<len+1;i++)
 	{
 		/*判断第一个字符以及最小长度下最后一个字符是否为数字,小数点或*号*/
-		if((Data[i]>=48&&Data[i]<=57)&&((Data[i+6]>=48&&Data[i+6]<=57)||Data[i+6]=='*'||Data[i+6]=='.'))
+		if(((Data[i]>=48&&Data[i]<=57)||Data[i]=='*')&&((Data[i+6]>=48&&Data[i+6]<=57)||Data[i+6]=='*'||Data[i+6]=='.'))
 		{
 			/*重新初始化相关变量*/
 			GroupPos=hi=mh=ml=lo=0;
@@ -738,7 +738,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 				else{break;}
 			}
 			/*最后确定是否为IP并保存到结果*/
-			if(GroupPos==3&&(ip.low[0]>=48&&ip.low[0]<=57))
+			if(GroupPos==3&&((ip.low[0]>=48&&ip.low[0]<=57)||ip.low[0]=='*')&&atoi(ip.low)<=255)
 			{
 				sprintf(Result,"%s.%s.%s.%s\r\n",ip.high,ip.midhigh,ip.midlow,ip.low);
 				/*判断与之前记录过的IP是否相同*/
