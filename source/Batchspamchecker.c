@@ -86,7 +86,7 @@ void __stdcall WriteResultFile(HWND hwnd)
 	int len=0;
 	HWND hList=NULL;
 	char FilePath[1000];
-	char ItemData[100];
+	char ItemData[1000];
 	FILE *ResultFile=NULL;
 	strcpy(FilePath,GetSavePath(hwnd));
 	len=strlen(FilePath);
@@ -106,7 +106,7 @@ void __stdcall WriteResultFile(HWND hwnd)
 				SendMessage(hList, LB_GETTEXT, (WPARAM)ListIndex, (LPARAM)ItemData);
 				fputs(ItemData,ResultFile);
 				fputc('\n',ResultFile);
-				ZeroMemory(ItemData, sizeof(char)*100);
+				ZeroMemory(ItemData, sizeof(char)*1000);
 			}
 			fclose(ResultFile);
 		}
@@ -119,14 +119,14 @@ void  __stdcall CopyToClickboard(HWND hwnd)
 	HWND hList = GetDlgItem(hwnd, IDC_RESULT);	
 	int SelCount = SendMessage(hList, LB_GETSELCOUNT, 0, 0);
 	int *SelIndex=(int*)GlobalAlloc(GPTR, sizeof(int)*SelCount);
-	char SELData[100];
-	GLOBALHANDLE hGlobal =GlobalAlloc(GHND | GMEM_SHARE, sizeof(char)*100*SelCount);
+	char SELData[1000];
+	GLOBALHANDLE hGlobal =GlobalAlloc(GHND | GMEM_SHARE, sizeof(char)*1000*SelCount);
 	char *SELDatas=(char*)GlobalLock(hGlobal);
 	int i=0;
 	SendMessage(hList, LB_GETSELITEMS, (WPARAM)SelCount, (LPARAM)SelIndex);
 	for(i=0;i<SelCount;i++)
 	{
-		ZeroMemory(SELData, sizeof(char)*100);
+		ZeroMemory(SELData, sizeof(char)*1000);
 		SendMessage(hList,LB_GETTEXT,(WPARAM)SelIndex[i],(LPARAM)SELData);
 		strcat(SELData,"\r\n");
 		strcat(SELDatas,SELData);
@@ -311,7 +311,7 @@ char* __stdcall CheckIPAdress(char IPAddress[])
 /*获取IP归属地*/
 location __stdcall GetLocation(char IP[21])
 {
-	location loc={0};  
+	location loc={NULL,NULL};  
 	openshare();
 	getipinfo(IP,&loc);  
 	return loc;
@@ -320,7 +320,7 @@ location __stdcall GetLocation(char IP[21])
 /*输出结果*/
 void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 {
-	char msg[100]="";
+	char msg[1000]="";
 	static unsigned int Error=0;
 	location loc=GetLocation(IPAddress);
 	DWORD ExitCode=0;
@@ -333,6 +333,10 @@ void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 		else if(result[53]=='n')
 		{
 			sprintf(msg,"ip %s   不在黑名单   %s %s",IPAddress,loc.p_country,loc.p_area );
+		}
+		else
+		{
+			sprintf(msg,"ip %s   查询失败   %s %s",IPAddress,loc.p_country,loc.p_area );
 		}
 		if(ResultDlg!=NULL)
 		{
