@@ -114,7 +114,7 @@ void __stdcall WriteResultFile(HWND hwnd)
 }
 
 /*复制选中的结果到剪贴板*/
-void  __stdcall CopyToClickboard(HWND hwnd)
+void  __stdcall CopyToClickboard(HWND hwnd,int mID)
 {
 	HWND hList = GetDlgItem(hwnd, IDC_RESULT);	
 	int SelCount = SendMessage(hList, LB_GETSELCOUNT, 0, 0);
@@ -122,14 +122,23 @@ void  __stdcall CopyToClickboard(HWND hwnd)
 	char SELData[1000];
 	GLOBALHANDLE hGlobal =GlobalAlloc(GHND | GMEM_SHARE, sizeof(char)*1000*SelCount);
 	char *SELDatas=(char*)GlobalLock(hGlobal);
-	int i=0;
+	int i=0,j;
 	SendMessage(hList, LB_GETSELITEMS, (WPARAM)SelCount, (LPARAM)SelIndex);
 	for(i=0;i<SelCount;i++)
 	{
 		ZeroMemory(SELData, sizeof(char)*1000);
-		SendMessage(hList,LB_GETTEXT,(WPARAM)SelIndex[i],(LPARAM)SELData);
+		SendMessageA(hList,LB_GETTEXT,(WPARAM)SelIndex[i],(LPARAM)SELData);
+		if(mID==IDM___2)/*如果只需复制IP*/
+		{			
+			for(j=3;(SELData[j]>=48&&SELData[j]<=57)||SELData[j]=='.';j++)
+			{
+				SELData[j-3]=SELData[j];
+			}
+			SELData[j-3]='\0';
+		}
 		strcat(SELData,"\r\n");
 		strcat(SELDatas,SELData);
+
 	}
 	GlobalUnlock(hGlobal);
 	OpenClipboard (hwnd) ;        
@@ -257,7 +266,10 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					WriteResultFile(hwnd);
 					break;
 				case IDM___1:
-					CopyToClickboard(hwnd);
+					CopyToClickboard(hwnd,IDM___1);
+					break;
+				case IDM___2:
+					CopyToClickboard(hwnd,IDM___2);
 					break;
 				default:break;
 			}
@@ -792,7 +804,7 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch(wParam)
 			{
 				case IDSYSM_ABOUT:
-					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！","版权信息",MB_ICONINFORMATION);
+					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！\n作者博客：http://www.cystc.org/\nBug报告及技术支持：http://www.cystc.org/?p=2375","版权信息",MB_ICONINFORMATION);
 					break;
 				default:return DefWindowProc(hwnd,message,wParam,lParam);
 			}

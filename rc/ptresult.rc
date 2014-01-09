@@ -19,6 +19,7 @@ IDR_MENU MENU
     POPUP "编辑"
     {
         MENUITEM "复制", IDM___1
+        MENUITEM "仅复制IP地址", IDM___2
     }
 }
 
