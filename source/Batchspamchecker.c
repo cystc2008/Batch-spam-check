@@ -789,22 +789,27 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	static HMENU hSysMenu=NULL;
-	static MENUITEMINFO Minfo;
+	static MENUITEMINFO MinfoAbout,MinfoReportBug;
 	static char *CBData=NULL;
 	switch(message)
 	{
 		case WM_INITDIALOG:
 			MainWindow=hwnd;
 			hSysMenu=GetSystemMenu(hwnd,FALSE);
-			Minfo=InitMenu("关于...",IDSYSM_ABOUT);
-			InsertMenuItemA(hSysMenu,5,TRUE,&Minfo);
+			MinfoAbout=InitMenu("关于...",IDSYSM_ABOUT);
+			MinfoReportBug=InitMenu("技术支持及Bug报告...",IDSYSM_REPORTBUG);
+			InsertMenuItemA(hSysMenu,6,TRUE,&MinfoAbout);
+			InsertMenuItemA(hSysMenu,5,TRUE,&MinfoReportBug);
 			SetIcon(hwnd);
 			break;
 		case WM_SYSCOMMAND:
 			switch(wParam)
 			{
 				case IDSYSM_ABOUT:
-					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！\n作者博客：http://www.cystc.org/\nBug报告及技术支持：http://www.cystc.org/?p=2375","版权信息",MB_ICONINFORMATION);
+					MessageBoxA(hwnd,"本软件著作权归Cystc所有，欢迎复制，传播，使用！\n作者博客：http://www.cystc.org/\n技术支持及Bug报告：http://www.cystc.org/?p=2375","版权信息",MB_ICONINFORMATION);
+					break;
+				case IDSYSM_REPORTBUG:
+					ShellExecuteA(hwnd, NULL, "http://www.cystc.org/?p=2375", NULL, NULL, SW_SHOW);
 					break;
 				default:return DefWindowProc(hwnd,message,wParam,lParam);
 			}
