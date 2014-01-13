@@ -136,9 +136,11 @@ void  __stdcall CopyToClickboard(HWND hwnd,int mID)
 			}
 			SELData[j-3]='\0';
 		}
-		strcat(SELData,"\r\n");
+		if(i!=SelCount-1)
+		{
+			strcat(SELData,"\r\n");
+		}
 		strcat(SELDatas,SELData);
-
 	}
 	GlobalUnlock(hGlobal);
 	OpenClipboard (hwnd) ;        
@@ -340,15 +342,15 @@ void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 	{
 		if(result[53]=='y')
 		{
-			sprintf(msg,"ip %s   在黑名单中   %s %s",IPAddress,loc.p_country,loc.p_area );		
+			sprintf(msg,"ip %-18s在黑名单中   %s %s",IPAddress,loc.p_country,loc.p_area);		
 		}
 		else if(result[53]=='n')
 		{
-			sprintf(msg,"ip %s   不在黑名单   %s %s",IPAddress,loc.p_country,loc.p_area );
+			sprintf(msg,"ip %-18s不在黑名单   %s %s",IPAddress,loc.p_country,loc.p_area);
 		}
 		else
 		{
-			sprintf(msg,"ip %s   查询失败   %s %s",IPAddress,loc.p_country,loc.p_area );
+			sprintf(msg,"ip %-18s查询失败   %s %s",IPAddress,loc.p_country,loc.p_area);
 		}
 		if(ResultDlg!=NULL)
 		{
