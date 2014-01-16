@@ -9,6 +9,7 @@
 #define IDC_CHECK                               1001
 #define IP_LIST                                 1002
 #define IDC_CBSEARCH                            1003
+#define IDC_CHKLOC                              1004
 #define IDC_CLEAN                               1005
 #define IDSYSM_ABOUT                            1013
 #define IDSYSM_REPORTBUG                        1014

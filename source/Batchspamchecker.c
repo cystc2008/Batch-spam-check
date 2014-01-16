@@ -30,6 +30,9 @@ char *IPData=NULL;
 /*保存主窗口句柄*/
 HWND MainWindow=NULL;
 
+/*判断是否去查询spam*/
+unsigned int CheckSpamSW=0;
+
 /*保存查询线程句柄*/
 HANDLE hThread=NULL;
 
@@ -348,6 +351,10 @@ void __stdcall PrintResult(char IPAddress[],char result[],HWND ResultDlg)
 		{
 			sprintf(msg,"ip %-18s不在黑名单   %s %s",IPAddress,loc.p_country,loc.p_area);
 		}
+		else if(result[0]=='N')/*如果仅查询归属地*/
+		{
+			sprintf(msg,"ip %-18s%s %s",IPAddress,loc.p_country,loc.p_area);
+		}
 		else
 		{
 			sprintf(msg,"ip %-18s查询失败   %s %s",IPAddress,loc.p_country,loc.p_area);
@@ -498,7 +505,14 @@ void __stdcall EnumTPF(IPGROUP IPGroup,HWND ResultDlg)
 			if(IPs[n].high[0]!='*'&&IPs[n].midhigh[0]!='*'&&IPs[n].midlow[0]!='*'&&IPs[n].low[0]!='*')
 			{
 				sprintf(IPResult,"%s.%s.%s.%s",IPs[n].high,IPs[n].midhigh,IPs[n].midlow,IPs[n].low);
-				PrintResult(IPResult,CheckIPAdress(IPResult),ResultDlg);
+				if(CheckSpamSW==IDC_CHECK)
+				{
+					PrintResult(IPResult,CheckIPAdress(IPResult),ResultDlg);
+				}
+				else if(CheckSpamSW==IDC_CHKLOC)
+				{
+					PrintResult(IPResult,"NONE",ResultDlg);
+				}
 			}
 		}
 		/*释放内存*/
@@ -577,7 +591,15 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 			{
 				IPAddress[i-1]='\0';
 			}
-			PrintResult(IPAddress,CheckIPAdress(IPAddress),ResultDlg);
+			/*提交查询*/
+			if(CheckSpamSW==IDC_CHECK)
+			{
+				PrintResult(IPAddress,CheckIPAdress(IPAddress),ResultDlg);
+			}
+			else if(CheckSpamSW==IDC_CHKLOC)
+			{
+				PrintResult(IPAddress,"NONE",ResultDlg);
+			}
 		}
 		m++;		
 	}
@@ -820,7 +842,12 @@ BOOL CALLBACK WindowProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			switch(LOWORD(wParam))
 			{
 				case IDC_CHECK:
+					CheckSpamSW=IDC_CHECK;
 					GetIpData(hwnd);					
+					break;
+				case IDC_CHKLOC:
+					CheckSpamSW=IDC_CHKLOC;
+					GetIpData(hwnd);
 					break;
 				case IDC_CBSEARCH:
 					if(CBData=GetCbData(hwnd))
