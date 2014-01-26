@@ -52,13 +52,31 @@ void __stdcall SetIcon(HWND hwnd)
 	SendMessage(hwnd, WM_SETICON, ICON_BIG, (LPARAM)LoadIcon(GetModuleHandle(NULL),MAKEINTRESOURCE(IDI_ICON3)));
 }
 
+/*将UNICODE转换为ANSI*/
+/*
+char* UnicodeToAnsi(const wchar_t *Unicode_String)
+{
+    static char ANSI_String[1000];
+    WideCharToMultiByte(CP_ACP,0 ,Unicode_String,-1,ANSI_String,1000,NULL,NULL);
+    return ANSI_String;
+}*/
+
+/*将ANSI转换为UNICODE*/
+/*
+wchar_t* AnsiToUnicode(const char *ANSI_String)
+{
+	static wchar_t Unicode_String[1000];
+	MultiByteToWideChar(CP_ACP,0, ANSI_String,-1,Unicode_String,1000);
+	return Unicode_String;
+}*/
+
 /*初始化通用对话框*/
 OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 {
 	OPENFILENAMEA ofn;
 	static char ModuleName[1000]="";
 	ZeroMemory(&ofn, sizeof(ofn));
-	ofn.lStructSize = sizeof (OPENFILENAME);
+	ofn.lStructSize =sizeof(OPENFILENAME);
 	ofn.hwndOwner = hwnd;		
 	ofn.lpstrFile = ModuleName;
 	ofn.nMaxFile = 1000;
@@ -66,6 +84,21 @@ OPENFILENAMEA __stdcall InitCommonDlg(LPCSTR lpstrFilter,HWND hwnd)
 	ofn.nFilterIndex = 1;
 	ofn.Flags = OFN_OVERWRITEPROMPT; 
 	return ofn;
+}
+
+/*初始化菜单*/
+MENUITEMINFO __stdcall InitMenu(LPSTR MenuText,unsigned int wID)
+{
+	MENUITEMINFO Minfo;
+	ZeroMemory(&Minfo,sizeof(Minfo));
+	Minfo.cbSize=sizeof(MENUITEMINFO);
+	Minfo.fMask=MFT_STRING | MIIM_DATA | MIIM_ID | MIIM_TYPE;
+	Minfo.fType=MFT_STRING;
+	Minfo.wID=wID;
+	Minfo.dwItemData=wID;
+	Minfo.dwTypeData=MenuText;
+	Minfo.cch=strlen(MenuText)+1;
+	return Minfo;
 }
 
 /*获取保存文件路径*/
@@ -114,6 +147,29 @@ void __stdcall WriteResultFile(HWND hwnd)
 			fclose(ResultFile);
 		}
 	}
+}
+
+/*从剪贴板中复制数据*/
+char* GetCbData(HWND hwnd)
+{
+	GLOBALHANDLE hGlobal=NULL;
+	char *pText=NULL;
+	char *pGlobal=NULL;
+	if(IsClipboardFormatAvailable(CF_TEXT))
+	{
+		OpenClipboard(hwnd);
+		hGlobal=GetClipboardData(CF_TEXT);
+		if(hGlobal!=NULL)
+		{
+			pText=(char*)GlobalAlloc(GMEM_FIXED,GlobalSize(hGlobal));
+			pGlobal =(char*)GlobalLock(hGlobal);
+			strcpy(pText,pGlobal);
+			GlobalUnlock(hGlobal);     
+			CloseClipboard();
+			return pText;
+		}
+	}
+	return NULL;
 }
 
 /*复制选中的结果到剪贴板*/
@@ -197,11 +253,59 @@ SIZE __stdcall GetCtrlSize(RECT rect)
 	return sz;
 }
 
+/*将结果排序*/
+void SortResult(HWND hwnd,int mID)
+{
+	HWND hList = GetDlgItem(hwnd, IDC_RESULT);	
+	char temp[1000]="";
+	int count=SendMessage(hList,LB_GETCOUNT ,0,0);
+	int i=0,j=0;
+	if(mID==IDM___SORT1)
+	{
+		for(i=j=0;j<count;i++,j++)
+		{
+			SendMessageA(hList,LB_GETTEXT,(WPARAM)i,(LPARAM)temp);				
+			if(temp[21]==-44)
+			{
+				ZeroMemory(temp, sizeof(char)*1000);
+				continue;
+			}
+			else if(temp[21]==-78)
+			{
+				SendMessageA(hList,LB_ADDSTRING,0,(LPARAM)temp);
+				SendMessage(hList,LB_DELETESTRING,(WPARAM)i,0);
+				ZeroMemory(temp, sizeof(char)*1000);
+				i--;
+			}
+		}
+	}
+	else if(mID==IDM___SORT2)
+	{
+		for(i=j=0;j<count;i++,j++)
+		{
+			SendMessageA(hList,LB_GETTEXT,(WPARAM)i,(LPARAM)temp);				
+			if(temp[21]==-78)
+			{
+				ZeroMemory(temp, sizeof(char)*1000);
+				continue;
+			}
+			else if(temp[21]==-44)
+			{
+				SendMessageA(hList,LB_ADDSTRING,0,(LPARAM)temp);
+				SendMessage(hList,LB_DELETESTRING,(WPARAM)i,0);
+				ZeroMemory(temp, sizeof(char)*1000);
+				i--;
+			}
+		}
+	}
+}
+
 /*处理结果窗消息*/
 BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
 	DWORD ExitCode=0;/*保存查询线程出口码*/
 	HMENU hMenu=NULL;
+	HMENU hSubMenu=NULL;
 	RECT rect={0,0,0,0};
 	//static RECT rectold;
 	static RECT rectoldCANCEL;
@@ -223,7 +327,12 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 			break;		
 		case WM_CONTEXTMENU:
 			hMenu=LoadMenuA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDR_MENU));
-			TrackPopupMenu(GetSubMenu(hMenu,0),TPM_LEFTALIGN | TPM_TOPALIGN |TPM_RIGHTBUTTON,GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam),0,hwnd,NULL);
+			hSubMenu=GetSubMenu(hMenu,0);
+			if(CheckSpamSW==IDC_CHECK)
+			{
+				EnableMenuItem(hSubMenu,2,MF_BYPOSITION|MF_ENABLED);
+			}
+			TrackPopupMenu(hSubMenu,TPM_LEFTALIGN | TPM_TOPALIGN |TPM_RIGHTBUTTON,GET_X_LPARAM(lParam),GET_Y_LPARAM(lParam),0,hwnd,NULL);
 			DestroyMenu(hMenu); 
 			break;
 		case WM_SIZE:
@@ -275,6 +384,12 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 					break;
 				case IDM___2:
 					CopyToClickboard(hwnd,IDM___2);
+					break;
+				case IDM___SORT1:
+					SortResult(hwnd,IDM___SORT1);
+					break;
+			    case IDM___SORT2:
+					SortResult(hwnd,IDM___SORT2);
 					break;
 				default:break;
 			}
@@ -605,29 +720,6 @@ void __stdcall ProcessIPData(HWND ResultDlg)
 	}
 }
 
-/*从剪贴板中复制数据*/
-char* GetCbData(HWND hwnd)
-{
-	GLOBALHANDLE hGlobal=NULL;
-	char *pText=NULL;
-	char *pGlobal=NULL;
-	if(IsClipboardFormatAvailable(CF_TEXT))
-	{
-		OpenClipboard(hwnd);
-		hGlobal=GetClipboardData(CF_TEXT);
-		if(hGlobal!=NULL)
-		{
-			pText=(char*)GlobalAlloc(GMEM_FIXED,GlobalSize(hGlobal));
-			pGlobal =(char*)GlobalLock(hGlobal);
-			strcpy(pText,pGlobal);
-			GlobalUnlock(hGlobal);     
-			CloseClipboard();
-			return pText;
-		}
-	}
-	return NULL;
-}
-
 /*获取用户输入的IP地址*/
 void __stdcall GetIpData(HWND hwnd)
 {
@@ -658,21 +750,6 @@ void __stdcall GetIpData(HWND hwnd)
 			MessageBoxA(hwnd,"您输入的不是IP地址！","警告",MB_ICONERROR);
 		}
 	}
-}
-
-/*初始化菜单*/
-MENUITEMINFO __stdcall InitMenu(LPSTR MenuText,unsigned int wID)
-{
-	MENUITEMINFO Minfo;
-	ZeroMemory(&Minfo,sizeof(Minfo));
-	Minfo.cbSize=sizeof(MENUITEMINFO);
-	Minfo.fMask=MFT_STRING | MIIM_DATA | MIIM_ID | MIIM_TYPE;
-	Minfo.fType=MFT_STRING;
-	Minfo.wID=wID;
-	Minfo.dwItemData=wID;
-	Minfo.dwTypeData=MenuText;
-	Minfo.cch=strlen(MenuText)+1;
-	return Minfo;
 }
 
 /*从剪贴板中搜索IP数据*/

@@ -20,6 +20,11 @@ IDR_MENU MENU
     {
         MENUITEM "复制", IDM___1
         MENUITEM "仅复制IP地址", IDM___2
+        POPUP "排序",GRAYED
+        {
+            MENUITEM "前置黑名单中的IP", IDM___SORT1
+            MENUITEM "前置不在黑名单中的IP", IDM___SORT2
+        }
     }
 }
 
@@ -35,6 +40,6 @@ CAPTION "检查结果"
 FONT 8, "Ms Shell Dlg"
 {
     PUSHBUTTON      "关闭", IDCANCEL, 243, 218, 50, 14
-    LISTBOX         IDC_RESULT, 4, 6, 290, 207, WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL | LBS_SORT | LBS_NOTIFY
+    LISTBOX         IDC_RESULT, 4, 6, 290, 207, WS_TABSTOP | WS_HSCROLL | WS_VSCROLL | LBS_NOINTEGRALHEIGHT | LBS_EXTENDEDSEL | LBS_NOTIFY
     PUSHBUTTON      "保存到文件...", IDC_SAVE, 4, 218, 68, 14
 }
