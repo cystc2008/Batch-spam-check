@@ -18,12 +18,12 @@ IDR_MENU MENU
 {
     POPUP "编辑"
     {
-        MENUITEM "复制", IDM___1
-        MENUITEM "仅复制IP地址", IDM___2
+        MENUITEM "复制", IDM_COPY
+        MENUITEM "仅复制IP地址", IDM_COPYIP
         POPUP "排序",GRAYED
         {
-            MENUITEM "前置黑名单中的IP", IDM___SORT1
-            MENUITEM "前置不在黑名单中的IP", IDM___SORT2
+            MENUITEM "前置黑名单中的IP", IDM_SORT1
+            MENUITEM "前置不在黑名单中的IP", IDM_SORT2
         }
     }
 }
