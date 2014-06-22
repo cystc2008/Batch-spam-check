@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2013 著作权由Cystc所有。著作权人保留一切权利。
+Copyright (c) 2013-2014 著作权由Cystc所有。著作权人保留一切权利。
 
 这份授权条款，在使用者符合以下三条件的情形下，授予使用者使用及再散播本
 软件包装原始码及二进位可执行形式的权利，无论此包装是否经改作皆然：
@@ -187,7 +187,7 @@ void  __stdcall CopyToClickboard(HWND hwnd,int mID)
 	{
 		ZeroMemory(SELData, sizeof(char)*1000);
 		SendMessageA(hList,LB_GETTEXT,(WPARAM)SelIndex[i],(LPARAM)SELData);
-		if(mID==IDM___2)/*如果只需复制IP*/
+		if(mID==IDM_COPYIP)/*如果只需复制IP*/
 		{			
 			for(j=3;(SELData[j]>=48&&SELData[j]<=57)||SELData[j]=='.';j++)
 			{
@@ -260,42 +260,32 @@ void SortResult(HWND hwnd,int mID)
 	char temp[1000]="";
 	int count=SendMessage(hList,LB_GETCOUNT ,0,0);
 	int i=0,j=0;
-	if(mID==IDM___SORT1)
+	int a=0,b=0;
+	if(mID==IDM_SORT1)/*前置在黑名单中的IP*/
 	{
-		for(i=j=0;j<count;i++,j++)
-		{
-			SendMessageA(hList,LB_GETTEXT,(WPARAM)i,(LPARAM)temp);				
-			if(temp[21]==-44)
-			{
-				ZeroMemory(temp, sizeof(char)*1000);
-				continue;
-			}
-			else if(temp[21]==-78)
-			{
-				SendMessageA(hList,LB_ADDSTRING,0,(LPARAM)temp);
-				SendMessage(hList,LB_DELETESTRING,(WPARAM)i,0);
-				ZeroMemory(temp, sizeof(char)*1000);
-				i--;
-			}
-		}
+		a=-44;
+		b=-78;
 	}
-	else if(mID==IDM___SORT2)
+	else if(mID==IDM_SORT2)/*前置不在黑名单中的IP*/
 	{
-		for(i=j=0;j<count;i++,j++)
+		a=-78;
+		b=-44;
+	}
+	/*开始排序*/
+	for(i=j=0;j<count;i++,j++)
+	{
+		SendMessageA(hList,LB_GETTEXT,(WPARAM)i,(LPARAM)temp);				
+		if(temp[21]==a)
 		{
-			SendMessageA(hList,LB_GETTEXT,(WPARAM)i,(LPARAM)temp);				
-			if(temp[21]==-78)
-			{
-				ZeroMemory(temp, sizeof(char)*1000);
-				continue;
-			}
-			else if(temp[21]==-44)
-			{
-				SendMessageA(hList,LB_ADDSTRING,0,(LPARAM)temp);
-				SendMessage(hList,LB_DELETESTRING,(WPARAM)i,0);
-				ZeroMemory(temp, sizeof(char)*1000);
-				i--;
-			}
+			ZeroMemory(temp, sizeof(char)*1000);
+			continue;
+		}
+		else if(temp[21]==b)
+		{
+			SendMessageA(hList,LB_ADDSTRING,0,(LPARAM)temp);
+			SendMessage(hList,LB_DELETESTRING,(WPARAM)i,0);
+			ZeroMemory(temp, sizeof(char)*1000);
+			i--;
 		}
 	}
 }
@@ -379,17 +369,17 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 				case IDC_SAVE:
 					WriteResultFile(hwnd);
 					break;
-				case IDM___1:
-					CopyToClickboard(hwnd,IDM___1);
+				case IDM_COPY:
+					CopyToClickboard(hwnd,IDM_COPY);
 					break;
-				case IDM___2:
-					CopyToClickboard(hwnd,IDM___2);
+				case IDM_COPYIP:
+					CopyToClickboard(hwnd,IDM_COPYIP);
 					break;
-				case IDM___SORT1:
-					SortResult(hwnd,IDM___SORT1);
+				case IDM_SORT1:
+					SortResult(hwnd,IDM_SORT1);
 					break;
-			    case IDM___SORT2:
-					SortResult(hwnd,IDM___SORT2);
+			    case IDM_SORT2:
+					SortResult(hwnd,IDM_SORT2);
 					break;
 				default:break;
 			}
@@ -410,7 +400,7 @@ char* __stdcall CheckIPAdress(char IPAddress[])
 	int num=0,nRet=SOCKET_ERROR;
 	WSADATA wsaData;
 	/*构造请求消息*/
-	sprintf(sndBuf, "GET http://www.stopforumspam.com/api?ip=%s\n\r\n",IPAddress);
+	sprintf(sndBuf, "GET http://www.stopforumspam.com/api?ip=%s\r\n",IPAddress);
 	/* socket初始化 */
 	WSAStartup(MAKEWORD(2, 0), &wsaData);
 	stSvrAddrIn.sin_family=AF_INET;
@@ -766,7 +756,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 	char Result[20]="";
 	char *OrigList=NULL;
 	/*申请内存空间以保存所有搜索结果*/
-	char *ResultAll=(char*)GlobalAlloc(GPTR,sizeof(char)*(len+Origlen+4));
+	char *ResultAll=(char*)GlobalAlloc(GPTR,sizeof(char)*(len+Origlen+4+(len/3)));
 	/*申请内存空间以保存历史搜索结果*/
 	char **ResultHistory=(char**)GlobalAlloc(GPTR,sizeof(char*)*(len/7));
 	for(m=0;m<len/7;m++)
@@ -787,7 +777,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 				ip.high[k]=ip.midhigh[k]=ip.midlow[k]=ip.low[k]='\0';
 			}
 			/*进一步判断接下来的14个字符以确定是否是IP并记录到临时存放IP的结构体,如不是IP则跳出循环停止记录IP*/
-			for(j=i;j<=i+14&&j<len+1;j++)
+			for(j=i;j<=i+14&&j<len;j++)
 			{
 				if(Data[j]=='.'&&GroupPos<3)
 				{
@@ -866,7 +856,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 				strcat(ResultAll,Result);
 				strcpy(ResultHistory[ResultNum++],Result);
 				same:
-				i=i+strlen(Result)-1;/*跳过已记录的IP或者已忽略的与之前相同的IP的长度并继续搜索*/
+				i=i+strlen(Result)-3;/*跳过已记录的IP或者已忽略的与之前相同的IP的长度并继续搜索*/
 			}
 		}
 	}
@@ -875,7 +865,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 	GetDlgItemTextA(hwnd, IP_LIST, OrigList,Origlen+3);
 	strcat(ResultAll,OrigList);
 	SetDlgItemText(hwnd, IP_LIST, ResultAll);
-	/*释放内存*/
+	/*释放内存*/	
 	GlobalFree((HGLOBAL)Data);
 	GlobalFree((HGLOBAL)ResultAll);
 	GlobalFree((HGLOBAL)OrigList);
@@ -883,7 +873,7 @@ void __stdcall SearchAllIP(char *Data,HWND hwnd)
 	{
 		GlobalFree((HGLOBAL)ResultHistory[m]);
 	}
-	GlobalFree((HGLOBAL)ResultHistory);
+	GlobalFree((HGLOBAL)ResultHistory);		
 }
 
 /*处理主窗口消息*/
