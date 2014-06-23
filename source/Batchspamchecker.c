@@ -310,10 +310,12 @@ BOOL CALLBACK ResultProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 	HWND hIDCANCEL=GetDlgItem(hwnd,IDCANCEL);
 	HWND hIDC_SAVE=GetDlgItem(hwnd,IDC_SAVE);
 	HWND hIDC_RESULT=GetDlgItem(hwnd,IDC_RESULT);
+	HFONT hf=CreateFont(-MulDiv(9, GetDeviceCaps(GetDC(NULL), LOGPIXELSY), 72), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "Courier New");
 	switch(message)
 	{
 		case WM_INITDIALOG:
 			SetIcon(hwnd);
+			SendDlgItemMessage(hwnd, IDC_RESULT, WM_SETFONT, (WPARAM)hf, TRUE);
 			break;		
 		case WM_CONTEXTMENU:
 			hMenu=LoadMenuA(GetModuleHandleA(NULL),MAKEINTRESOURCEA(IDR_MENU));
